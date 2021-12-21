@@ -174,19 +174,19 @@ async def meme(ctx):
     await ctx.send(embed=embed)
     print("Meme Image Command Used By: {}".format(ctx.author.display_name) + " | Image URL: " + str(memeimage))
 
-@client.command()
-async def yt(ctx):
-    embed = discord.Embed(
+#@client.command()
+#async def yt(ctx):
+#    embed = discord.Embed(
 #            title="Sumisu's Youtube!",
 #            description="https://www.youtube.com/channel/UCZ_lWTHNwPIAecB8nHLje9w",
-            color=discord.Color.from_rgb(0, 255, 0),
-        )
+#            color=discord.Color.from_rgb(0, 255, 0),
+#        )
 #    embed.set_image(url=memeimage)
-    embed.add_field(name="Sumisu's Youtube:", value="https://www.youtube.com/channel/UCZ_lWTHNwPIAecB8nHLje9w", inline=True)
-    embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
-    embed.set_footer(text="Made by: Sumisu®")
-    await ctx.send(embed=embed)
-    print("Youtube Command Used By: {}".format(ctx.author.display_name))
+#    embed.add_field(name="Sumisu's Youtube:", value="https://www.youtube.com/channel/UCZ_lWTHNwPIAecB8nHLje9w", inline=True)
+#    embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
+#    embed.set_footer(text="Made by: Sumisu®")
+#    await ctx.send(embed=embed)
+#    print("Youtube Command Used By: {}".format(ctx.author.display_name))
 
 @client.command()
 async def food(ctx):
@@ -207,38 +207,38 @@ async def food(ctx):
     await ctx.send(embed=embed)
     print("Food Image Command Used By: {}".format(ctx.author.display_name) + " | Image URL: " + foodimage)
 
-@client.command()
-async def anime(ctx, args):
-    animesearch = anime
-    animer = requests.get('https://api.jikan.moe/v3/search/anime?q=' + str(anime).join('%20') + '&sort=desc&page=1')
-    animeurl = animer.url
-    animerequest = requests.get(animeurl)
-    animetext_json = json.loads(animerequest.text)
-    animeparse_json = animetext_json
-    animedata = animeparse_json['results']
-    animeone = animedata[0]
-    animedataurl = animeone['url']
-    animetitle = animeone['title']
-    animesynopsis = animeone['synopsis']
-    animescore = animeone['score']
-    animeairing = animeone['airing']
-    animeepisodes = animeone['episodes']
-    animeimageurl = animeone['image_url']
+#@client.command()
+#async def anime(ctx, args):
+#    animesearch = anime
+#    animer = requests.get('https://api.jikan.moe/v3/search/anime?q=' + str(anime).join('%20') + '&sort=desc&page=1')
+#    animeurl = animer.url
+#    animerequest = requests.get(animeurl)
+#    animetext_json = json.loads(animerequest.text)
+#    animeparse_json = animetext_json
+#    animedata = animeparse_json['results']
+#    animeone = animedata[0]
+#    animedataurl = animeone['url']
+#    animetitle = animeone['title']
+#    animesynopsis = animeone['synopsis']
+#    animescore = animeone['score']
+#    animeairing = animeone['airing']
+#    animeepisodes = animeone['episodes']
+#    animeimageurl = animeone['image_url']
 
-    embed = discord.Embed(
-            title=animetitle,
-            url=animedataurl,
-            description=animesynopsis,
-            color=discord.Color.from_rgb(0, 255, 0),
-        )
-    embed.add_field(name="Episodes:", value=animeepisodes, inline=False)
-    embed.add_field(name="Airing:", value=animeairing, inline=False)
-    embed.add_field(name="Score:", value=animescore, inline=False)
-    embed.set_image(url=animeimageurl)
-    embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
-    embed.set_footer(text="Made by: Sumisu®")
-    await ctx.send(embed=embed)
-    print("Anime Command Used By: {}".format(ctx.author.display_name) + " | Anime Searched: " + str(animesearch))
+#    embed = discord.Embed(
+#            title=animetitle,
+#            url=animedataurl,
+#            description=animesynopsis,
+#            color=discord.Color.from_rgb(0, 255, 0),
+#        )
+#    embed.add_field(name="Episodes:", value=animeepisodes, inline=False)
+#    embed.add_field(name="Airing:", value=animeairing, inline=False)
+#    embed.add_field(name="Score:", value=animescore, inline=False)
+#    embed.set_image(url=animeimageurl)
+#    embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
+#    embed.set_footer(text="Made by: Sumisu®")
+#    await ctx.send(embed=embed)
+#    print("Anime Command Used By: {}".format(ctx.author.display_name) + " | Anime Searched: " + str(animesearch))
 
 @client.command()
 async def age(ctx):
