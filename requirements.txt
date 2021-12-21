@@ -5,3 +5,5 @@ dnspython==2.1.0
 async-timeout==3.0.1
 git+https://github.com/Dinnerbone/mcstatus
 mcstatus
+chardet2
+urllib3
