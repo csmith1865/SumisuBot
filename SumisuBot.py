@@ -5,6 +5,13 @@ from mcstatus import MinecraftServer
 import json
 import datetime
 
+def read_token():
+    with open("token.txt", "r") as f:
+        lines = f.readlines()
+        return lines[0].strip()
+
+token = read_token()
+
 client = commands.Bot(command_prefix="!")
 
 @client.event
@@ -246,7 +253,7 @@ async def age(ctx):
     await ctx.send(format(ctx.author.mention) + ", your account was created on:" + accountage.strftime('%B %d %Y') + " at " + accountage.strftime('%I:%M:%S %p'))
     print("Age Command Used By: {}".format(ctx.author.display_name) + " | Account Age: " + accountage.strftime('%B %d %Y') + " at " + accountage.strftime('%I:%M:%S %p'))
 
-client.run('Nzc2NTIxMDY1OTcwNDAxMjkw.X62FmQ.qx0PTJzEJqvWxsSiahmRswyWV7Y')
+client.run(token)
 
 # If you wish to securely hide your token, you can do so in a .env file.
 # 1. Create a .env in the same directory as your Python scripts
