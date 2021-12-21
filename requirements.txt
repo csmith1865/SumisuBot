@@ -7,3 +7,4 @@ git+https://github.com/Dinnerbone/mcstatus
 mcstatus
 chardet2
 urllib3
+requests
