@@ -4,10 +4,10 @@ pandas
 dnspython==2.1.0
 async-timeout==3.0.1
 git+https://github.com/Dinnerbone/mcstatus
-mcstatus
+mcstatus==2.2.0
 chardet2
 urllib3
-requests
-typing
-discord-py-interactions
-discord-py-slash-command
+discord==1.7.3
+discord.py==1.7.3
+discord-py-interactions==3.0.2
+discord-py-slash-command==3.0.3
