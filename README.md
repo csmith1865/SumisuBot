@@ -1,6 +1,6 @@
 # SumisuBot
 
-![](https://byob.yarr.is/csmith1865/SumisuBot/time)
+![](https://byob.yarr.is/RubbaBoy/Example/time)
 
 **A Discord Bot made by SumisuMC**
 <br />
