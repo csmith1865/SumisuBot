@@ -1,6 +1,6 @@
 # SumisuBot
 
-[![Heroku](https://byob.yarr.is/beanboi7/yomomma-apiv2/heroku/)](https://sumisubot.herokuapp.com/)
+![](https://byob.yarr.is/csmith1865/SumisuBot/time)
 
 **A Discord Bot made by SumisuMC**
 <br />
