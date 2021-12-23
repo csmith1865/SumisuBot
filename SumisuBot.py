@@ -158,7 +158,7 @@ async def help5(ctx):
 @client.command()
 async def help6(ctx):
         embed = discord.Embed(
-                title="Commands Page 5:",
+                title="Commands Page 6:",
                 description="A list of all the commands that you can use with SumisuBot!",
                 color=discord.Color.from_rgb(0, 255, 0),
             )
@@ -174,12 +174,12 @@ async def help6(ctx):
         embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
         embed.set_footer(text="Made by: Sumisu®")
         await ctx.author.send(embed=embed)
-        print("Help Page 5 Command Used By: {}".format(ctx.author.display_name))
+        print("Help Page 6 Command Used By: {}".format(ctx.author.display_name))
 
 @client.command()
 async def help7(ctx):
         embed = discord.Embed(
-                title="Commands Page 5:",
+                title="Commands Page 7:",
                 description="A list of all the commands that you can use with SumisuBot!",
                 color=discord.Color.from_rgb(0, 255, 0),
             )
@@ -188,7 +188,7 @@ async def help7(ctx):
         embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
         embed.set_footer(text="Made by: Sumisu®")
         await ctx.author.send(embed=embed)
-        print("Help Page 5 Command Used By: {}".format(ctx.author.display_name))
+        print("Help Page 7 Command Used By: {}".format(ctx.author.display_name))
 
 @client.command()
 async def mc(ctx, arg):
