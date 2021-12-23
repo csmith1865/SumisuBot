@@ -9,6 +9,4 @@ chardet2
 urllib3
 requests
 typing
-random
-json
 discord-py-interactions
