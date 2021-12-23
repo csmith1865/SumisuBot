@@ -10,3 +10,4 @@ urllib3
 requests
 typing
 discord-py-interactions
+discord-py-slash-command
