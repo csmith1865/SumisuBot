@@ -27,7 +27,7 @@ guild = client.get_guild(922664509213114429)
 
 @client.event
 async def on_ready():
-    await client.change_presence(status=discord.Status.idle, activity=discord.Activity(type=discord.ActivityType.playing, name=cmdprfx + "mc Minecraft Server IP"))
+    await client.change_presence(status=discord.Status.idle, activity=discord.Activity(type=discord.ActivityType.listening, name="everything... O.O"))
     print("Bot is online.")
 
 @client.command()
