@@ -15,7 +15,6 @@ from typing import Optional
 from discord import Embed, Member
 from discord.ext.commands import cooldown, BucketType
 import time
-from phue import Bridge, PhueException
 import os
 import platform
 import sys
@@ -68,7 +67,6 @@ async def on_ready():
     print(f"Discord PY version: {discord.__version__}")
     print(f"Discord Slash version: {discord_slash.__version__}")
     print(f"MCStatus version: 7.0.0")
-    print(f"PHUE version: 1.1")
     print(f"Python version: {platform.python_version()}")
     print(f"Running on: {platform.system()} {platform.release()} ({os.name})")
     print("-------------------")
