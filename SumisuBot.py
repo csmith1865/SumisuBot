@@ -184,6 +184,7 @@ async def help7(ctx):
                 color=discord.Color.from_rgb(0, 255, 0),
             )
         embed.add_field(name=cmdprfx + "covid", value="Show's current COVID info!", inline=True)
+        embed.add_field(name=cmdprfx + "hex `hexcolor`", value="Show's the HEX color!", inline=True)
 
         embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
         embed.set_footer(text="Made by: Sumisu®")
@@ -1172,7 +1173,10 @@ async def ipconfig(ctx, arg):
     await ctx.send(embed=embed)
     print("IP Command Used By: {}".format(ctx.author.display_name) + " | IP: " + arg)
 
-@client.command()
+@client.command(name="randomcolor",
+            description="Shows a random color!",
+            aliases=['randomcolour', 'rcolor', 'rcolour'],
+            pass_context=True)
 async def randomcolor(ctx):
     randomcolorr = requests.get('https://x-colors.herokuapp.com/api/random')
     randomcolorurl = randomcolorr.url
@@ -1594,7 +1598,10 @@ async def covid(ctx):
     await ctx.send(embed=embed)
     print("COVID Information Command Used By: {}".format(ctx.author.display_name))
 
-@client.command()
+@client.command(name="hex",
+            description="Shows the HEX color!",
+            aliases=['hexcolor', 'hexcolour', 'hcolor', 'hcolour'],
+            pass_context=True)
 async def hex(ctx, args):
     hexr = requests.get('https://x-colors.herokuapp.com/api/hex2rgb?value=' + args)
     hexurl = hexr.url
@@ -1615,7 +1622,7 @@ async def hex(ctx, args):
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
     embed.set_footer(text="Made by: Sumisu®")
     await ctx.send(embed=embed)
-    print("Random Color Command Used By: {}".format(ctx.author.display_name) + " | Random Color: " + hexcolor)
+    print("Hex Color Command Used By: {}".format(ctx.author.display_name) + " | Hex Color: " + hexcolor)
 
 
 
