@@ -1594,7 +1594,28 @@ async def covid(ctx):
     await ctx.send(embed=embed)
     print("COVID Information Command Used By: {}".format(ctx.author.display_name))
 
+@client.command()
+async def hex(ctx, args):
+    hexr = requests.get('https://x-colors.herokuapp.com/api/hex2rgb?value=' + args)
+    hexurl = hexr.url
+    hexrequest = requests.get(hexurl)
+    hextext_json = json.loads(hexrequest.text)
+    hexparse_json = hextext_json
+    hexcolor = hexparse_json['hex']
+    hexcolorfixed = hexcolor.replace("#","")
+    hexcolorembed = int(hexcolorfixed, 16)
 
+    embed = discord.Embed(
+           title=hexcolor,
+           url='https://www.color-hex.com/color/' + args,
+#           description=randomcolorimage,
+            color=hexcolorembed
+        )
+    embed.set_image(url="https://plchldr.co/i/250x215?&bg=" + hexcolorfixed + "&text=")
+    embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
+    embed.set_footer(text="Made by: Sumisu®")
+    await ctx.send(embed=embed)
+    print("Random Color Command Used By: {}".format(ctx.author.display_name) + " | Random Color: " + hexcolor)
 
 
 
