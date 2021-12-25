@@ -1,10 +1,8 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands.bot import Bot
-import discord_slash
 from discord_slash.context import SlashContext
 from discord_slash.utils.manage_commands import create_option
-import mcstatus
 import requests
 from mcstatus import MinecraftServer
 import json
@@ -15,70 +13,29 @@ from typing import Optional
 from discord import Embed, Member
 from discord.ext.commands import cooldown, BucketType
 import time
-import os
-import platform
-import sys
 
-__location__ = os.path.realpath(
-    os.path.join(os.getcwd(), os.path.dirname(__file__)))
+def read_token():
+    with open("token.txt", "r") as f:
+        lines = f.readlines()
+        return lines[0].strip()
 
-if not os.path.isfile("config.json"):
-    sys.exit("'config.json' not found! Please add it and try again.")
-else:
-    with open("config.json") as file:
-        config = json.load(file)
-##############################################################################################
-client = commands.Bot(command_prefix=config["prefix"], help_command=None)
-cmdprfx = config["prefix"]
-#guild = config["guild"]
-randomgreetings = config["greetings"]
+token = read_token()
 
-embedhex = config["hex"]
-embedhexfix = int(embedhex, 16)
-dscactivitystatus = config["activity"]
-dscstatus = config["status"]
-
-dsclisteningstatus = config["listeningstatuses"]
-dscwatchingstatus = config["watchingingstatuses"]
-dscplayingstatuses = config["playingstatuses"]
-
-if dscactivitystatus == "listening":
-    dscactivity = discord.ActivityType.listening
-    discordactivitystatus = random.choice(dsclisteningstatus)
-elif dscactivitystatus == "watching":
-    dscactivity = discord.ActivityType.watching
-    discordactivitystatus = random.choice(dscwatchingstatus)
-else:
-    dscactivity = discord.ActivityType.playing
-    discordactivitystatus = random.choice(dscplayingstatuses)
-
-if dscstatus == "online":
-    dcstatus = discord.Status.online
-elif dscstatus == "idle":
-    dcstatus = discord.Status.idle
-else:
-    dcstatus = discord.Status.dnd
-
+client = commands.Bot(command_prefix="|", help_command=None)
+cmdprfx = "|"
+guild = client.get_guild(922664509213114429)
 
 @client.event
 async def on_ready():
-    await client.change_presence(status=dscstatus, activity=discord.Activity(type=dscactivity, name=discordactivitystatus))
-    print(f"Logged in as {client.user.name}")
-    print(f"Discord PY version: {discord.__version__}")
-    print(f"Discord Slash version: {discord_slash.__version__}")
-    print(f"MCStatus version: 7.0.0")
-    print(f"Python version: {platform.python_version()}")
-    print(f"Running on: {platform.system()} {platform.release()} ({os.name})")
-    print("-------------------")
+    await client.change_presence(status=discord.Status.idle, activity=discord.Activity(type=discord.ActivityType.listening, name="everything... O.O"))
     print("Bot is online.")
-    print()
 
 @client.command()
 async def help(ctx):
         embed = discord.Embed(
                 title="Error:",
                 description="Use " + cmdprfx + "help`pagenumber` (with no spaces) for help!",
-                color=embedhexfix,
+                color=discord.Color.from_rgb(0, 255, 0),
             )
         embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
         embed.set_footer(text="Made by: Sumisu®")
@@ -90,7 +47,7 @@ async def help1(ctx):
         embed = discord.Embed(
                 title="Commands Page 1:",
                 description="A list of all the commands that you can use with SumisuBot!",
-                color=embedhexfix,
+                color=discord.Color.from_rgb(0, 255, 0),
             )
 
         embed.add_field(name=cmdprfx + "mc `server`", value="Allows you to look up information about a minecraft server!", inline=True)
@@ -113,7 +70,7 @@ async def help2(ctx):
         embed = discord.Embed(
                 title="Commands Page 2:",
                 description="A list of all the commands that you can use with SumisuBot!",
-                color=embedhexfix,
+                color=discord.Color.from_rgb(0, 255, 0),
             )
 
         embed.add_field(name=cmdprfx + "bored", value="Sends a bored anime gif in chat!", inline=True)
@@ -136,7 +93,7 @@ async def help3(ctx):
         embed = discord.Embed(
                 title="Commands Page 3:",
                 description="A list of all the commands that you can use with SumisuBot!",
-                color=embedhexfix,
+                color=discord.Color.from_rgb(0, 255, 0),
             )
 
         embed.add_field(name=cmdprfx + "kiss", value="Sends a kissing anime gif in chat!", inline=True)
@@ -159,7 +116,7 @@ async def help4(ctx):
         embed = discord.Embed(
                 title="Commands Page 4:",
                 description="A list of all the commands that you can use with SumisuBot!",
-                color=embedhexfix,
+                color=discord.Color.from_rgb(0, 255, 0),
             )
 
         embed.add_field(name=cmdprfx + "sleep", value="Use this when you get sleepy!", inline=True)
@@ -182,7 +139,7 @@ async def help5(ctx):
         embed = discord.Embed(
                 title="Commands Page 5:",
                 description="A list of all the commands that you can use with SumisuBot!",
-                color=embedhexfix,
+                color=discord.Color.from_rgb(0, 255, 0),
             )
         embed.add_field(name=cmdprfx + "yesorno", value="When you can't decide, let someone else!", inline=True)
         embed.add_field(name=cmdprfx + "insult", value="Fuck 'em!", inline=True)
@@ -203,7 +160,7 @@ async def help6(ctx):
         embed = discord.Embed(
                 title="Commands Page 6:",
                 description="A list of all the commands that you can use with SumisuBot!",
-                color=embedhexfix,
+                color=discord.Color.from_rgb(0, 255, 0),
             )
         embed.add_field(name=cmdprfx + "yomomma", value="Sends a Yo Momma Joke!", inline=True)
         embed.add_field(name=cmdprfx + "uselessfact", value="Sends a useless fact!", inline=True)
@@ -224,7 +181,7 @@ async def help7(ctx):
         embed = discord.Embed(
                 title="Commands Page 7:",
                 description="A list of all the commands that you can use with SumisuBot!",
-                color=embedhexfix,
+                color=discord.Color.from_rgb(0, 255, 0),
             )
         embed.add_field(name=cmdprfx + "covid", value="Show's current COVID info!", inline=True)
         embed.add_field(name=cmdprfx + "hex `hexcolor`", value="Show's the HEX color!", inline=True)
@@ -277,7 +234,7 @@ async def mc(ctx, arg):
             embed = discord.Embed(
                 title="Server: " + arg,
                 description='**IP:** ' + str(mcip) + '\n**Port:** ' + str(mcport) + '\n**Players:** ' + str(status.players.online) + '/' + str(status.players.max) + '\n**Version:** ' + str(decodedversion) + '\n\n**Description:** ' + str(data).replace("[", "").replace("]", "").replace("'", "") + '\n\n**Online:** ' + str(playerdata).replace("[", "").replace("]", "").replace("'", ""),
-                color=embedhexfix,
+                color=discord.Color.from_rgb(0, 255, 0),
             )
             embed.set_thumbnail(url="https://eu.mc-api.net/v3/server/favicon/" + arg)
             embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -293,7 +250,7 @@ async def mc(ctx, arg):
         embed = discord.Embed(
             title="Server: " + arg,
             description='**IP:** ' + str(mcip) + '\n**Port:** ' + str(mcport) + '\n**Players:** ' + str(status.players.online) + '/' + str(status.players.max) + '\n**Version:** ' + str(decodedversion) + '\n\n**Description:** ' + str(data).replace("[", "").replace("]", "").replace("'", "") + '\n\n**Online:** N/A',
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
         embed.set_thumbnail(url="https://eu.mc-api.net/v3/server/favicon/" + arg)
         embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -321,7 +278,7 @@ async def catfact(ctx):
     embed = discord.Embed(
             title="CatFact!",
             description='\n\n**Fact:** ' + cleancatfact,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
 
     embed.set_thumbnail(url=catimage)
@@ -342,7 +299,7 @@ async def cat(ctx):
     embed = discord.Embed(
 #           title=catimage,
 #           description=catimage,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=catimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -368,7 +325,7 @@ async def meme(ctx):
     embed = discord.Embed(
 #            title=catimage,
             description="Made by: " + str(memeauthor),
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=memeimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -382,7 +339,7 @@ async def meme(ctx):
 #            title="Sumisu's Youtube!",
 #            url="https://www.youtube.com/channel/UCZ_lWTHNwPIAecB8nHLje9w",
 #            description="https://www.youtube.com/channel/UCZ_lWTHNwPIAecB8nHLje9w",
-#            color=embedhexfix,
+#            color=discord.Color.from_rgb(0, 255, 0),
 #        )
 #    embed.set_image(url=memeimage)
 #    embed.add_field(name="Sumisu's Youtube:", value="https://www.youtube.com/embed/ur3-A7ovGUk", inline=True)
@@ -398,11 +355,11 @@ async def meme(ctx):
             aliases=['hiya', 'hey', 'hi', 'howdy'],
             pass_context=True)
 async def hello(ctx):
-    greetings = random.choice(randomgreetings)
+    greetings = ["Hello!", "Hi!", "Hello, sunshine!", "Ahoy, matey!", "Hiya!", "Greetings!", "Howdy partner!", "Bonjour!", "Buenas noches!", "Buenos dias!", "Good day!", "Salut!", "Hola!", "Zdravstvuyte!", "Privet!", "您好!", "你好!", "早安", "こんにちわ!", "Guten Tag!", "Hallo!", "안녕하세요!", "안녕!", "!مرحبا" ,"السلام عليكم", "Halløj!", "Cześć!", "नमस्कार!", "नमस्ते!", "!שלום"]
     embed = discord.Embed(
-            title=greetings,
+            title=random.choice(greetings),
             description=ctx.author.mention,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
 #    embed.set_image(url=memeimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -421,7 +378,7 @@ async def food(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description="Food Image: ",
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=foodimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -456,7 +413,7 @@ async def food(ctx):
 #            title=animetitle,
 #            url=animedataurl,
 #            description=animesynopsis,
-#            color=embedhexfix,
+#            color=discord.Color.from_rgb(0, 255, 0),
 #        )
 #    embed.add_field(name="Episodes:", value=animeepisodes, inline=False)
 #    embed.add_field(name="Airing:", value=animeairing, inline=False)
@@ -473,7 +430,7 @@ async def age(ctx):
     embed = discord.Embed(
            title="Account Age: ",
            description=ctx.author.mention + "\n\nYour account was created on: **" + accountage.strftime('%B %d %Y') + " at " + accountage.strftime('%I:%M:%S %p') + "**",
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
     embed.set_footer(text="Made by: Sumisu®")
@@ -492,7 +449,7 @@ async def baka(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=bakaname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=bakaimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -512,7 +469,7 @@ async def bite(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=bitename,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=biteimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -532,7 +489,7 @@ async def blush(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=blushname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=blushimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -552,7 +509,7 @@ async def bored(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=boredname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=boredimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -572,7 +529,7 @@ async def cry(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=cryname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=cryimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -592,7 +549,7 @@ async def cuddle(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=cuddlename,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=cuddleimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -612,7 +569,7 @@ async def dance(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=dancename,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=danceimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -632,7 +589,7 @@ async def facepalm(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=facepalmname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=facepalmimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -652,7 +609,7 @@ async def feed(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=feedname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=feedimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -672,7 +629,7 @@ async def happy(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=happyname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=happyimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -692,7 +649,7 @@ async def highfive(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=highfivename,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=highfiveimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -712,7 +669,7 @@ async def hug(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=hugname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=hugimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -732,7 +689,7 @@ async def kiss(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=kissname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=kissimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -752,7 +709,7 @@ async def laugh(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=laughname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=laughimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -772,7 +729,7 @@ async def pat(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=patname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=patimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -792,7 +749,7 @@ async def poke(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=pokename,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=pokeimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -812,7 +769,7 @@ async def pout(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=poutname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=poutimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -832,7 +789,7 @@ async def shrug(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=shrugname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=shrugimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -852,7 +809,7 @@ async def slap(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=slapname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=slapimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -872,7 +829,7 @@ async def sleep(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=sleepname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=sleepimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -892,7 +849,7 @@ async def smile(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=smilename,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=smileimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -912,7 +869,7 @@ async def smug(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=smugname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=smugimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -932,7 +889,7 @@ async def stare(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=starename,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=stareimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -952,7 +909,7 @@ async def think(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=thinkname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=thinkimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -972,7 +929,7 @@ async def thumbsup(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=thumbsupname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=thumbsupimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -992,7 +949,7 @@ async def tickle(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=ticklename,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=tickleimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -1012,7 +969,7 @@ async def wave(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=wavename,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=waveimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -1032,7 +989,7 @@ async def wink(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=winkname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=winkimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -1054,7 +1011,7 @@ async def nekos(ctx):
            title="Artist: " + nekosname,
             url=nekosurl,
 #            description=nekosname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=nekosimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -1122,7 +1079,7 @@ async def newlife(ctx):
     embed = discord.Embed(
             title=newlifetitle + ". " + newlifefirstname + " " + newlifelastname,
             description='',
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.add_field(name="Gender:", value=newlifegender.title(), inline=False)
     embed.add_field(name="Address:", value=str(newlifestreetnumber) + " " + str(newlifestreetname) + ", " + str(newlifecity) + ", " + str(newlifestate) + ", " + str(newlifecountry) + ", " + str(newlifepostalcode), inline=False)
@@ -1148,7 +1105,7 @@ async def yesorno(ctx):
     embed = discord.Embed(
            title=yesorno.title(),
 #           description='',
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=yesornoimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -1168,7 +1125,7 @@ async def insult(ctx):
     embed = discord.Embed(
            title=insult,
 #           description=insult,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
 #    embed.set_image(url=yesornoimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -1198,7 +1155,7 @@ async def ipconfig(ctx, arg):
     embed = discord.Embed(
            title="Status: " + status.title(),
 #           description=insult,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
 #    embed.set_image(url=yesornoimage)
     embed.add_field(name="Continent: ", value=continent, inline=False)
@@ -1257,7 +1214,7 @@ async def boredactivity(ctx):
            title='Bored Activity:',
 #           url='',
            description=boredactivity + ".",
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     #embed.set_image(url=shrugimage)
     embed.add_field(name="Type: ", value=boredactivitytype.title(), inline=True)
@@ -1281,7 +1238,7 @@ async def time(ctx):
            title='Time:',
 #           url='',
            description=time,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     #embed.set_image(url=shrugimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -1295,7 +1252,7 @@ async def qrurl(ctx, args):
            title='URL:',
            url=str(args),
            description="Link: " + str(args),
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url='https://www.qrtag.net/api/qr_12.png?url=' + args)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -1314,7 +1271,7 @@ async def qrurl(ctx, args):
 #           title='Embed Message:',
 #           url='',
 #           description="Sent by: " + ctx.author.mention,
-#            color=embedhexfix,
+#            color=discord.Color.from_rgb(0, 255, 0),
 #        )
     #embed.set_image(url=shrugimage)
 #    embed.add_field(name="Message: ", value="\n" + str(response), inline=True)
@@ -1401,7 +1358,7 @@ async def lookup(ctx, arg):
     embed = discord.Embed(
            title="__Define: " + lookupword.capitalize() + "__",
 #           description=str(lookupdefinitionfixed),
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.add_field(name="Type: ", value=partofspeech.capitalize(), inline=False)
     embed.add_field(name="Definition: ", value=lookupdefinition.capitalize(), inline=False)
@@ -1428,7 +1385,7 @@ async def yomomma(ctx):
 #           title='',
 #           url='',
            description=yomommajoke,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     #embed.set_image(url=shrugimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -1452,7 +1409,7 @@ async def uselessfact(ctx):
 #           title='',
 #           url='',
            description=uselessfact,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     #embed.set_image(url=shrugimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -1471,7 +1428,7 @@ async def coffee(ctx):
     embed = discord.Embed(
 #           title=catimage,
 #           description=catimage,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=coffeeimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -1497,7 +1454,7 @@ async def mcskin(ctx, arg):
     embed = discord.Embed(
            title=mcskinname,
 #           description=str(mcskinuuid),
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url="https://crafatar.com/renders/body/" + mcskinuuid + "?overlay")
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -1523,7 +1480,7 @@ async def mcskindownload(ctx, arg):
            title="Download: " + mcskinname + "'s Skin!",
            url="https://crafatar.com/skins/" + mcskinuuid,
 #           description=str(mcskinuuid),
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url="https://crafatar.com/skins/" + mcskinuuid)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -1547,7 +1504,7 @@ async def drawcard(ctx):
     embed = discord.Embed(
            title=drawcardcode,
 #           description="",
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=drawcard)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -1574,7 +1531,7 @@ async def randomd6(ctx):
     embed = discord.Embed(
            title=random6dimagevaluefixed,
 #           description=random6dimagevalue,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url="http://roll.diceapi.com/images/poorly-drawn/d6/" + str(random6dimagevalue) + ".png")
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -1601,7 +1558,7 @@ async def randomd20(ctx):
     embed = discord.Embed(
            title=randomd20imagevaluefixed,
 #           description=random6dimagevalue,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url="http://roll.diceapi.com/images/poorly-drawn/d20/" + str(randomd20imagevalue) + ".png")
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -1629,7 +1586,7 @@ async def covid(ctx):
     embed = discord.Embed(
            title="Covid Information:",
 #           description=random6dimagevalue,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.add_field(name="Total Cases: ", value=covidtotalcases, inline=True)
     embed.add_field(name="Active Cases: ", value=covidactivecases, inline=True)
@@ -1667,230 +1624,7 @@ async def hex(ctx, args):
     await ctx.send(embed=embed)
     print("Hex Color Command Used By: {}".format(ctx.author.display_name) + " | Hex Color: " + hexcolor)
 
-@client.event
-async def on_message(message):
-    if message.content.find("!hello") != -1:
-        await message.channel.send("Hi")
 
-    elif message.content == "{}r red".format(cmdprfx):
-        hexr = requests.get('https://x-colors.herokuapp.com/api/random/red')
-        hexurl = hexr.url
-        hexrequest = requests.get(hexurl)
-        hextext_json = json.loads(hexrequest.text)
-        hexparse_json = hextext_json
-        hexcolor = hexparse_json['hex']
-        hexcolorfixed = hexcolor.replace("#","")
-        hexcolorembed = int(hexcolorfixed, 16)
-
-        embed = discord.Embed(
-            title=hexcolor,
-            url='https://www.color-hex.com/color/',
-    #           description=randomcolorimage,
-                color=hexcolorembed
-            )
-        embed.set_image(url="https://plchldr.co/i/250x215?&bg=" + hexcolorfixed + "&text=")
-        embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
-        embed.set_footer(text="Made by: Sumisu®")
-        await message.channel.send(embed=embed)
-        print("Random Red Color Command Used By: {}".format(message.author.display_name) + " | Random Red Color: " + hexcolor)
-
-    elif message.content == "{}r pink".format(cmdprfx):
-        hexr = requests.get('https://x-colors.herokuapp.com/api/random/pink')
-        hexurl = hexr.url
-        hexrequest = requests.get(hexurl)
-        hextext_json = json.loads(hexrequest.text)
-        hexparse_json = hextext_json
-        hexcolor = hexparse_json['hex']
-        hexcolorfixed = hexcolor.replace("#","")
-        hexcolorembed = int(hexcolorfixed, 16)
-
-        embed = discord.Embed(
-            title=hexcolor,
-            url='https://www.color-hex.com/color/',
-    #           description=randomcolorimage,
-                color=hexcolorembed
-            )
-        embed.set_image(url="https://plchldr.co/i/250x215?&bg=" + hexcolorfixed + "&text=")
-        embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
-        embed.set_footer(text="Made by: Sumisu®")
-        await message.channel.send(embed=embed)
-        print("Random Pink Color Command Used By: {}".format(message.author.display_name) + " | Random Pink Color: " + hexcolor)
-
-    elif message.content == "{}r purple".format(cmdprfx):
-        hexr = requests.get('https://x-colors.herokuapp.com/api/random/purple')
-        hexurl = hexr.url
-        hexrequest = requests.get(hexurl)
-        hextext_json = json.loads(hexrequest.text)
-        hexparse_json = hextext_json
-        hexcolor = hexparse_json['hex']
-        hexcolorfixed = hexcolor.replace("#","")
-        hexcolorembed = int(hexcolorfixed, 16)
-
-        embed = discord.Embed(
-            title=hexcolor,
-            url='https://www.color-hex.com/color/',
-    #           description=randomcolorimage,
-                color=hexcolorembed
-            )
-        embed.set_image(url="https://plchldr.co/i/250x215?&bg=" + hexcolorfixed + "&text=")
-        embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
-        embed.set_footer(text="Made by: Sumisu®")
-        await message.channel.send(embed=embed)
-        print("Random Purple Color Command Used By: {}".format(message.author.display_name) + " | Random Purple Color: " + hexcolor)
-
-    elif message.content == "{}r navy".format(cmdprfx):
-        hexr = requests.get('https://x-colors.herokuapp.com/api/random/navy')
-        hexurl = hexr.url
-        hexrequest = requests.get(hexurl)
-        hextext_json = json.loads(hexrequest.text)
-        hexparse_json = hextext_json
-        hexcolor = hexparse_json['hex']
-        hexcolorfixed = hexcolor.replace("#","")
-        hexcolorembed = int(hexcolorfixed, 16)
-
-        embed = discord.Embed(
-            title=hexcolor,
-            url='https://www.color-hex.com/color/',
-    #           description=randomcolorimage,
-                color=hexcolorembed
-            )
-        embed.set_image(url="https://plchldr.co/i/250x215?&bg=" + hexcolorfixed + "&text=")
-        embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
-        embed.set_footer(text="Made by: Sumisu®")
-        await message.channel.send(embed=embed)
-        print("Random Navy Color Command Used By: {}".format(message.author.display_name) + " | Random Navy Color: " + hexcolor)
-
-    elif message.content == "{}r blue".format(cmdprfx):
-        hexr = requests.get('https://x-colors.herokuapp.com/api/random/blue')
-        hexurl = hexr.url
-        hexrequest = requests.get(hexurl)
-        hextext_json = json.loads(hexrequest.text)
-        hexparse_json = hextext_json
-        hexcolor = hexparse_json['hex']
-        hexcolorfixed = hexcolor.replace("#","")
-        hexcolorembed = int(hexcolorfixed, 16)
-
-        embed = discord.Embed(
-            title=hexcolor,
-            url='https://www.color-hex.com/color/',
-    #           description=randomcolorimage,
-                color=hexcolorembed
-            )
-        embed.set_image(url="https://plchldr.co/i/250x215?&bg=" + hexcolorfixed + "&text=")
-        embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
-        embed.set_footer(text="Made by: Sumisu®")
-        await message.channel.send(embed=embed)
-        print("Random Blue Color Command Used By: {}".format(message.author.display_name) + " | Random Blue Color: " + hexcolor)
-
-    elif message.content == "{}r aqua".format(cmdprfx):
-        hexr = requests.get('https://x-colors.herokuapp.com/api/random/aqua')
-        hexurl = hexr.url
-        hexrequest = requests.get(hexurl)
-        hextext_json = json.loads(hexrequest.text)
-        hexparse_json = hextext_json
-        hexcolor = hexparse_json['hex']
-        hexcolorfixed = hexcolor.replace("#","")
-        hexcolorembed = int(hexcolorfixed, 16)
-
-        embed = discord.Embed(
-            title=hexcolor,
-            url='https://www.color-hex.com/color/',
-    #           description=randomcolorimage,
-                color=hexcolorembed
-            )
-        embed.set_image(url="https://plchldr.co/i/250x215?&bg=" + hexcolorfixed + "&text=")
-        embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
-        embed.set_footer(text="Made by: Sumisu®")
-        await message.channel.send(embed=embed)
-        print("Random Aqua Color Command Used By: {}".format(message.author.display_name) + " | Random Aqua Color: " + hexcolor)
-
-    elif message.content == "{}r green".format(cmdprfx):
-        hexr = requests.get('https://x-colors.herokuapp.com/api/random/green')
-        hexurl = hexr.url
-        hexrequest = requests.get(hexurl)
-        hextext_json = json.loads(hexrequest.text)
-        hexparse_json = hextext_json
-        hexcolor = hexparse_json['hex']
-        hexcolorfixed = hexcolor.replace("#","")
-        hexcolorembed = int(hexcolorfixed, 16)
-
-        embed = discord.Embed(
-            title=hexcolor,
-            url='https://www.color-hex.com/color/',
-    #           description=randomcolorimage,
-                color=hexcolorembed
-            )
-        embed.set_image(url="https://plchldr.co/i/250x215?&bg=" + hexcolorfixed + "&text=")
-        embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
-        embed.set_footer(text="Made by: Sumisu®")
-        await message.channel.send(embed=embed)
-        print("Random Green Color Command Used By: {}".format(message.author.display_name) + " | Random Green Color: " + hexcolor)
-
-    elif message.content == "{}r lime".format(cmdprfx):
-        hexr = requests.get('https://x-colors.herokuapp.com/api/random/lime')
-        hexurl = hexr.url
-        hexrequest = requests.get(hexurl)
-        hextext_json = json.loads(hexrequest.text)
-        hexparse_json = hextext_json
-        hexcolor = hexparse_json['hex']
-        hexcolorfixed = hexcolor.replace("#","")
-        hexcolorembed = int(hexcolorfixed, 16)
-
-        embed = discord.Embed(
-            title=hexcolor,
-            url='https://www.color-hex.com/color/',
-    #           description=randomcolorimage,
-                color=hexcolorembed
-            )
-        embed.set_image(url="https://plchldr.co/i/250x215?&bg=" + hexcolorfixed + "&text=")
-        embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
-        embed.set_footer(text="Made by: Sumisu®")
-        await message.channel.send(embed=embed)
-        print("Random Lime Color Command Used By: {}".format(message.author.display_name) + " | Random Lime Color: " + hexcolor)
-
-    elif message.content == "{}r yellow".format(cmdprfx):
-        hexr = requests.get('https://x-colors.herokuapp.com/api/random/yellow')
-        hexurl = hexr.url
-        hexrequest = requests.get(hexurl)
-        hextext_json = json.loads(hexrequest.text)
-        hexparse_json = hextext_json
-        hexcolor = hexparse_json['hex']
-        hexcolorfixed = hexcolor.replace("#","")
-        hexcolorembed = int(hexcolorfixed, 16)
-
-        embed = discord.Embed(
-            title=hexcolor,
-            url='https://www.color-hex.com/color/',
-    #           description=randomcolorimage,
-                color=hexcolorembed
-            )
-        embed.set_image(url="https://plchldr.co/i/250x215?&bg=" + hexcolorfixed + "&text=")
-        embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
-        embed.set_footer(text="Made by: Sumisu®")
-        await message.channel.send(embed=embed)
-        print("Random Yellow Color Command Used By: {}".format(message.author.display_name) + " | Random Yellow Color: " + hexcolor)
-
-    elif message.content == "{}r orange".format(cmdprfx):
-        hexr = requests.get('https://x-colors.herokuapp.com/api/random/orange')
-        hexurl = hexr.url
-        hexrequest = requests.get(hexurl)
-        hextext_json = json.loads(hexrequest.text)
-        hexparse_json = hextext_json
-        hexcolor = hexparse_json['hex']
-        hexcolorfixed = hexcolor.replace("#","")
-        hexcolorembed = int(hexcolorfixed, 16)
-
-        embed = discord.Embed(
-            title=hexcolor,
-            url='https://www.color-hex.com/color/',
-    #           description=randomcolorimage,
-                color=hexcolorembed
-            )
-        embed.set_image(url="https://plchldr.co/i/250x215?&bg=" + hexcolorfixed + "&text=")
-        embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
-        embed.set_footer(text="Made by: Sumisu®")
-        await message.channel.send(embed=embed)
-        print("Random Orange Color Command Used By: {}".format(message.author.display_name) + " | Random Orange Color: " + hexcolor)
 
 
 
@@ -1942,7 +1676,7 @@ async def _help(ctx:SlashContext):
     embed = discord.Embed(
             title="Error:",
             description="Use " + cmdprfx + "help`pagenumber` (with no spaces) for help!",
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
     embed.set_footer(text="Made by: Sumisu®")
@@ -1957,7 +1691,7 @@ async def _help1(ctx):
         embed = discord.Embed(
                 title="Commands Page 1:",
                 description="A list of all the commands that you can use with SumisuBot!",
-                color=embedhexfix,
+                color=discord.Color.from_rgb(0, 255, 0),
             )
 
         embed.add_field(name=cmdprfx + "mc `server`", value="Allows you to look up information about a minecraft server!", inline=True)
@@ -1983,7 +1717,7 @@ async def _help2(ctx):
         embed = discord.Embed(
                 title="Commands Page 2:",
                 description="A list of all the commands that you can use with SumisuBot!",
-                color=embedhexfix,
+                color=discord.Color.from_rgb(0, 255, 0),
             )
 
         embed.add_field(name=cmdprfx + "bored", value="Sends a bored anime gif in chat!", inline=True)
@@ -2009,7 +1743,7 @@ async def _help3(ctx):
         embed = discord.Embed(
                 title="Commands Page 3:",
                 description="A list of all the commands that you can use with SumisuBot!",
-                color=embedhexfix,
+                color=discord.Color.from_rgb(0, 255, 0),
             )
 
         embed.add_field(name=cmdprfx + "kiss", value="Sends a kissing anime gif in chat!", inline=True)
@@ -2035,7 +1769,7 @@ async def _help4(ctx):
         embed = discord.Embed(
                 title="Commands Page 4:",
                 description="A list of all the commands that you can use with SumisuBot!",
-                color=embedhexfix,
+                color=discord.Color.from_rgb(0, 255, 0),
             )
 
         embed.add_field(name=cmdprfx + "sleep", value="Use this when you get sleepy!", inline=True)
@@ -2061,7 +1795,7 @@ async def _help5(ctx):
         embed = discord.Embed(
                 title="Commands Page 5:",
                 description="A list of all the commands that you can use with SumisuBot!",
-                color=embedhexfix,
+                color=discord.Color.from_rgb(0, 255, 0),
             )
         embed.add_field(name=cmdprfx + "yesorno", value="When you can't decide, let someone else!", inline=True)
         embed.add_field(name=cmdprfx + "insult", value="Fuck 'em!", inline=True)
@@ -2085,7 +1819,7 @@ async def _help6(ctx):
         embed = discord.Embed(
                 title="Commands Page 6:",
                 description="A list of all the commands that you can use with SumisuBot!",
-                color=embedhexfix,
+                color=discord.Color.from_rgb(0, 255, 0),
             )
         embed.add_field(name=cmdprfx + "yomomma", value="Sends a Yo Momma Joke!", inline=True)
         embed.add_field(name=cmdprfx + "uselessfact", value="Sends a useless fact!", inline=True)
@@ -2109,7 +1843,7 @@ async def _help7(ctx):
         embed = discord.Embed(
                 title="Commands Page 7:",
                 description="A list of all the commands that you can use with SumisuBot!",
-                color=embedhexfix,
+                color=discord.Color.from_rgb(0, 255, 0),
             )
         embed.add_field(name=cmdprfx + "covid", value="Show's current COVID info!", inline=True)
 
@@ -2140,7 +1874,7 @@ async def _catfact(ctx):
     embed = discord.Embed(
             title="CatFact!",
             description='\n\n**Fact:** ' + cleancatfact,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
 
     embed.set_thumbnail(url=catimage)
@@ -2164,7 +1898,7 @@ async def _cat(ctx):
     embed = discord.Embed(
 #           title=catimage,
 #           description=catimage,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=catimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2193,7 +1927,7 @@ async def _meme(ctx):
     embed = discord.Embed(
 #            title=catimage,
             description="Made by: " + str(memeauthor),
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=memeimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2206,11 +1940,11 @@ async def _meme(ctx):
     description="Greets you!"
 )
 async def _hello(ctx):
-    greetings = random.choice(randomgreetings)
+    greetings = ["Hello!", "Hi!", "Hello, sunshine!", "Ahoy, matey!", "Hiya!"]
     embed = discord.Embed(
-            title=greetings,
+            title=random.choice(greetings),
             description=ctx.author.mention,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
 #    embed.set_image(url=memeimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2223,11 +1957,11 @@ async def _hello(ctx):
     description="Greets you!"
 )
 async def _hi(ctx):
-    greetings = random.choice(randomgreetings)
+    greetings = ["Hello!", "Hi!", "Hello, sunshine!", "Ahoy, matey!", "Hiya!"]
     embed = discord.Embed(
-            title=greetings,
+            title=random.choice(greetings),
             description=ctx.author.mention,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
 #    embed.set_image(url=memeimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2240,11 +1974,11 @@ async def _hi(ctx):
     description="Greets you!"
 )
 async def _hey(ctx):
-    greetings = random.choice(randomgreetings)
+    greetings = ["Hello!", "Hi!", "Hello, sunshine!", "Ahoy, matey!", "Hiya!"]
     embed = discord.Embed(
-            title=greetings,
+            title=random.choice(greetings),
             description=ctx.author.mention,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
 #    embed.set_image(url=memeimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2266,7 +2000,7 @@ async def _food(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description="Food Image: ",
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=foodimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2283,7 +2017,7 @@ async def _age(ctx):
     embed = discord.Embed(
            title="Account Age: ",
            description=ctx.author.mention + "\n\nYour account was created on: **" + accountage.strftime('%B %d %Y') + " at " + accountage.strftime('%I:%M:%S %p') + "**",
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
     embed.set_footer(text="Made by: Sumisu®")
@@ -2306,7 +2040,7 @@ async def _baka(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=bakaname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=bakaimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2329,7 +2063,7 @@ async def _bite(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=bitename,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=biteimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2352,7 +2086,7 @@ async def _blush(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=blushname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=blushimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2375,7 +2109,7 @@ async def _bored(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=boredname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=boredimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2398,7 +2132,7 @@ async def _cry(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=cryname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=cryimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2422,7 +2156,7 @@ async def _cuddle(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=cuddlename,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=cuddleimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2445,7 +2179,7 @@ async def _dance(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=dancename,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=danceimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2468,7 +2202,7 @@ async def _facepalm(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=facepalmname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=facepalmimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2491,7 +2225,7 @@ async def _feed(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=feedname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=feedimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2514,7 +2248,7 @@ async def _happy(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=happyname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=happyimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2537,7 +2271,7 @@ async def _highfive(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=highfivename,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=highfiveimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2560,7 +2294,7 @@ async def _hug(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=hugname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=hugimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2583,7 +2317,7 @@ async def _kiss(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=kissname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=kissimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2606,7 +2340,7 @@ async def _laugh(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=laughname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=laughimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2629,7 +2363,7 @@ async def _pat(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=patname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=patimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2652,7 +2386,7 @@ async def _poke(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=pokename,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=pokeimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2675,7 +2409,7 @@ async def _pout(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=poutname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=poutimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2698,7 +2432,7 @@ async def _shrug(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=shrugname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=shrugimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2721,7 +2455,7 @@ async def _slap(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=slapname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=slapimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2744,7 +2478,7 @@ async def _sleep(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=sleepname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=sleepimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2767,7 +2501,7 @@ async def _smile(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=smilename,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=smileimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2790,7 +2524,7 @@ async def _smug(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=smugname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=smugimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2813,7 +2547,7 @@ async def _stare(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=starename,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=stareimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2836,7 +2570,7 @@ async def _think(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=thinkname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=thinkimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2859,7 +2593,7 @@ async def _thumbsup(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=thumbsupname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=thumbsupimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2882,7 +2616,7 @@ async def _tickle(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=ticklename,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=tickleimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2905,7 +2639,7 @@ async def _wave(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=wavename,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=waveimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2928,7 +2662,7 @@ async def _wink(ctx):
     embed = discord.Embed(
 #           title=catimage,
            description=winkname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=winkimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -2953,7 +2687,7 @@ async def _nekos(ctx):
            title="Artist: " + nekosname,
             url=nekosurl,
 #            description=nekosname,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=nekosimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -3024,7 +2758,7 @@ async def _newlife(ctx):
     embed = discord.Embed(
             title=newlifetitle + ". " + newlifefirstname + " " + newlifelastname,
             description='',
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.add_field(name="Gender:", value=newlifegender.title(), inline=False)
     embed.add_field(name="Address:", value=str(newlifestreetnumber) + " " + str(newlifestreetname) + ", " + str(newlifecity) + ", " + str(newlifestate) + ", " + str(newlifecountry) + ", " + str(newlifepostalcode), inline=False)
@@ -3053,7 +2787,7 @@ async def _yesorno(ctx):
     embed = discord.Embed(
            title=yesorno.title(),
 #           description='',
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=yesornoimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -3076,7 +2810,7 @@ async def _insult(ctx):
     embed = discord.Embed(
            title=insult,
 #           description=insult,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
 #    embed.set_image(url=yesornoimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -3127,7 +2861,7 @@ async def _time(ctx):
            title='Time:',
 #           url='',
            description=time,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     #embed.set_image(url=shrugimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -3151,7 +2885,7 @@ async def _yomomma(ctx):
 #           title='',
 #           url='',
            description=yomommajoke,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     #embed.set_image(url=shrugimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -3175,7 +2909,7 @@ async def _uselessfact(ctx):
 #           title='',
 #           url='',
            description=uselessfact,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     #embed.set_image(url=shrugimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -3197,7 +2931,7 @@ async def _coffee(ctx):
     embed = discord.Embed(
 #           title=catimage,
 #           description=catimage,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=coffeeimage)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -3224,7 +2958,7 @@ async def _drawcard(ctx):
     embed = discord.Embed(
            title=drawcardcode,
 #           description="",
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url=drawcard)
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -3251,7 +2985,7 @@ async def _d6(ctx):
     embed = discord.Embed(
            title=random6dimagevaluefixed,
 #           description=random6dimagevalue,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url="http://roll.diceapi.com/images/poorly-drawn/d6/" + str(random6dimagevalue) + ".png")
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -3278,7 +3012,7 @@ async def _d20(ctx):
     embed = discord.Embed(
            title=randomd20imagevaluefixed,
 #           description=random6dimagevalue,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.set_image(url="http://roll.diceapi.com/images/poorly-drawn/d20/" + str(randomd20imagevalue) + ".png")
     embed.set_author(name="SumisuMC#0001", url="https://bit.ly/SumisuDC", icon_url="https://cdn.discordapp.com/avatars/391291696098312202/a_6ffa06c159fe4c0453f8d21eac9ee194.webp?size=32")
@@ -3306,7 +3040,7 @@ async def _covid(ctx):
     embed = discord.Embed(
            title="Covid Information:",
 #           description=random6dimagevalue,
-            color=embedhexfix,
+            color=discord.Color.from_rgb(0, 255, 0),
         )
     embed.add_field(name="Total Cases: ", value=covidtotalcases, inline=True)
     embed.add_field(name="Active Cases: ", value=covidactivecases, inline=True)
@@ -3319,7 +3053,7 @@ async def _covid(ctx):
     print("COVID Information Command Used By: {}".format(ctx.author.display_name))
 ##########################################################################################
 
-client.run(config["token"])
+client.run(token)
 
 
 # If you wish to securely hide your token, you can do so in a .env file.
