@@ -1,6 +1,6 @@
 # SumisuBot
 
-[![Heroku](https://byob.yarr.is/beanboi7/yomomma-apiv2/heroku/)](https://sumisuapi.herokuapp.com/jokes/)
+[![Heroku](https://byob.yarr.is/beanboi7/yomomma-apiv2/heroku/)](https://sumisuapi.herokuapp.com/sumisu/)
 
 **A Discord Bot made by SumisuMC**
 <br />
