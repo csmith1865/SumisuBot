@@ -1,8 +1,11 @@
 {
-  "prefix": "|",
-  "token": "Nzc2NTIxMDY1OTcwNDAxMjkw.X62FmQ.qx0PTJzEJqvWxsSiahmRswyWV7Y",
+  "prefix": "-",
+  "token": "OTIwNjA0NzY0ODk3Njc3MzUy.Ybmx_w.r72iVbiwZa-_NjN8zB-20U6hccU",
   "botId": "0",
   "hex": "FFFFFF",
+  "boticon": "https://cdn.discordapp.com/avatars/391291696098312202/b55b93a87b55a0a753b0dccf5c0515ec.webp?size=32",
+  "discordusername": "SumisuMC#0001",
+  "discordusernameurl": "https://bit.ly/SumisuDC",
   "activity": "listening",
   "status": "online",
   "playingstatuses": [
