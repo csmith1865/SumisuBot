@@ -15,7 +15,6 @@ from typing import Optional
 from discord import Embed, Member
 from discord.ext.commands import cooldown, BucketType
 import time
-from phue import Bridge, PhueException
 import os
 import platform
 import sys
