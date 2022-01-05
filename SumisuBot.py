@@ -1628,7 +1628,7 @@ async def hex(ctx, args):
 async def poll(ctx, *, content:str):
     await ctx.channel.purge(limit=1)
     embed = discord.Embed(
-            title="Poll asked by {}:".format(ctx.author.display_name),
+            title="Poll asked by {}:".format(ctx.author),
             description="```{}``` \n✅ = Yes\n❌ = No\n".format(content),
             color=embedhexfix
         )
