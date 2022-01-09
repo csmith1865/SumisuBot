@@ -21,6 +21,7 @@ import sys
 from datetime import datetime
 from itertools import cycle
 import calendar
+import pgeocode
 
 
 __location__ = os.path.realpath(
@@ -103,7 +104,7 @@ async def on_ready():
     daily_color.start()
     quote_of_the_day.start()
     meme_of_the_hour.start()
-    daily_weather.start()
+    daily_weather_forecast.start()
     print(f"Logged in as {client.user.name}")
     print(f"Discord PY version: {discord.__version__}")
     print(f"Discord Slash version: {discord_slash.__version__}")
@@ -1878,6 +1879,33 @@ async def randomdrink(ctx):
     await ctx.send(embed=embed)
     print("Random Drink Command Used By: {}".format(ctx.author) + " | Drink: {}".format(randommeal))
 
+'''
+@client.command()
+async def purge(ctx, *, content:int):
+    embed = discord.Embed(
+            title="Purge:",
+            description="{} Messages Purged!".format(content),
+            color=embedhexfix
+        )
+    embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
+    embed.set_footer(text="Made by: Sumisu®")
+    await ctx.channel.purge(limit=content)
+    await ctx.send(embed=embed)
+    print("Purge Command Used By: {}".format(ctx.author) + " | Messages purged: {}".format(content))
+
+@client.command()
+async def purgeself(ctx, *, content:int):
+    embed = discord.Embed(
+            title="Purge:",
+            description="{} Messages Purged!".format(content),
+            color=embedhexfix
+        )
+    embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
+    embed.set_footer(text="Made by: Sumisu®")
+    await ctx.channel.purge(limit=content)
+    print("Purge Self Command Used By: {}".format(ctx.author) + " | Messages purged: {}".format(content))
+'''
+
 @client.command(name="weather5",
             description="Shows weather forcast information!",
             aliases=['fivedayforcast', '5df', 'fdf'],
@@ -2210,10 +2238,10 @@ async def quote_of_the_day():
     message_channel = client.get_channel(target_channel_id)
     await message_channel.send(embed=embed)
 
-#################################################Daily Forecast#######################################################
+#################################################Daily Forecast####################################################################
 
 @tasks.loop(hours=24)
-async def daily_weather():
+async def daily_weather_forecast():
     target_channel_id = dailyweatherchannel
     import requests
     searchlocation = dailyweatherlocation
@@ -2271,55 +2299,122 @@ async def daily_weather():
 
     message_channel = client.get_channel(target_channel_id)
     await message_channel.send(embed=embed)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ##################################################################################################################
+#####################LIGHTS##################LIGHTS####################LIGHTS################LIGHTS###############
+##################################################################################################################
+'''
+@client.command(name="lightson",
+            description="Turn my lights on!",
+            aliases=['lighton', 'on'],
+            pass_context=True)
+async def lightson(ctx):
+    import requests
+    api_url = "http://10.0.0.4/api/jlxCFrG2Nt64uPaCuIo8YA7Yc0uAqe12IkE2lMh1/lights/4/state"
+    todo = {"on": True}
+    response = requests.put(api_url, json=todo)
+    response.json()
+    {'on': True}
 
+    embed = discord.Embed(
+           title="Lights On",
+           description="Turned on bedroom lights!",
+            color=embedhexfix,
+        )
+    embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
+    embed.set_footer(text="Made by: Sumisu®")
+    await ctx.send(embed=embed)
+    print("Light On Command Used By: {}".format(ctx.author))
 
+@client.command(name="lightsoff",
+            description="Turn my lights on!",
+            aliases=['lightoff', 'off'],
+            pass_context=True)
+async def lightsoff(ctx):
+    import requests
+    api_url = "http://10.0.0.4/api/jlxCFrG2Nt64uPaCuIo8YA7Yc0uAqe12IkE2lMh1/lights/4/state"
+    todo = {"on": False}
+    response = requests.put(api_url, json=todo)
+    response.json()
+    {'on': False}
 
+    embed = discord.Embed(
+           title="Lights Off",
+           description="Turned off bedroom lights!",
+            color=embedhexfix,
+        )
+    embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
+    embed.set_footer(text="Made by: Sumisu®")
+    await ctx.send(embed=embed)
+    print("Light Off Command Used By: {}".format(ctx.author))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+@client.command(name="lightbri",
+            description="Set light brightness!",
+            aliases=['lbri', 'bri'],
+            pass_context=True)
+async def lightbri(ctx, arg):
+    from phue import Bridge
+    b = Bridge('10.0.0.4')
+    lights = b.lights
+    b.set_light(4, 'bri', int(arg))
+    embed = discord.Embed(
+           title="Light Brightness:",
+           description="Set lights to: " + arg,
+            color=embedhexfix,
+        )
+    embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
+    embed.set_footer(text="Made by: Sumisu®")
+    await ctx.send(embed=embed)
+    print("Light Brightness Command Used By: {}".format(ctx.author) + " | Brightness: " + str(arg))
+'''
+##################################################################################################################
 
 
 
@@ -3823,6 +3918,56 @@ async def _covid(ctx):
     embed.set_footer(text="Made by: Sumisu®")
     await ctx.send(embed=embed)
     print("COVID Information Command Used By: {}".format(ctx.author))
+
+##################################################################################################################
+#####################LIGHTS##################LIGHTS####################LIGHTS################LIGHTS###############
+##################################################################################################################
+'''
+@slash.slash(
+    name="on",
+    description="Turns bedroom lights off!"
+)
+async def _lightson(ctx):
+    import requests
+    api_url = "http://10.0.0.4/api/jlxCFrG2Nt64uPaCuIo8YA7Yc0uAqe12IkE2lMh1/lights/4/state"
+    todo = {"on": True}
+    response = requests.put(api_url, json=todo)
+    response.json()
+    {'on': True}
+
+    embed = discord.Embed(
+           title="Lights On",
+           description="Turned on bedroom lights!",
+            color=embedhexfix,
+        )
+    embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
+    embed.set_footer(text="Made by: Sumisu®")
+    await ctx.send(embed=embed)
+    print("Light On Command Used By: {}".format(ctx.author))
+
+@slash.slash(
+    name="off",
+    description="Turns bedroom lights on!"
+)
+async def _off(ctx):
+    import requests
+    api_url = "http://10.0.0.4/api/jlxCFrG2Nt64uPaCuIo8YA7Yc0uAqe12IkE2lMh1/lights/4/state"
+    todo = {"on": False}
+    response = requests.put(api_url, json=todo)
+    response.json()
+    {'on': False}
+
+    embed = discord.Embed(
+           title="Lights Off",
+           description="Turned off bedroom lights!",
+            color=embedhexfix,
+        )
+    embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
+    embed.set_footer(text="Made by: Sumisu®")
+    await ctx.send(embed=embed)
+    print("Light Off Command Used By: {}".format(ctx.author))
+'''
+##################################################################################################################
 ##################################################################################################################
 
 client.run(config["token"])
