@@ -1,5 +1,5 @@
-import discord
-from discord.ext import commands
+import discord,random,asyncio,os
+from discord.ext import commands, tasks
 from discord.ext.commands.bot import Bot
 import discord_slash
 from discord_slash.context import SlashContext
@@ -18,6 +18,10 @@ import time
 import os
 import platform
 import sys
+from datetime import datetime
+from itertools import cycle
+import calendar
+
 
 __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
@@ -54,12 +58,20 @@ cmdprfx = config["prefix"]
 #guild = config["guild"]
 randomgreetings = config["greetings"]
 
+dailyweatherlocation = config["dailyweatherlocation"]
+
+dailycolorchannel = config["dailycolorchannel"]
+memeofthehourchannel = config["memeofthehourchannel"]
+quoteofthedaychannel = config["quoteofthedaychannel"]
+dailyweatherchannel = config["dailyweatherchannel"]
+
 boticon = config["boticon"]
 discordusername = config["discordusername"]
 discordusernameurl = config["discordusernameurl"]
 
 embedhex = config["hex"]
 embedhexfix = int(embedhex, 16)
+
 dscactivitystatus = config["activity"]
 dscstatus = config["status"]
 
@@ -69,13 +81,13 @@ dscplayingstatuses = config["playingstatuses"]
 
 if dscactivitystatus == "listening":
     dscactivity = discord.ActivityType.listening
-    discordactivitystatus = random.choice(dsclisteningstatus)
+    discordactivitystatus = cycle(dsclisteningstatus)
 elif dscactivitystatus == "watching":
     dscactivity = discord.ActivityType.watching
-    discordactivitystatus = random.choice(dscwatchingstatus)
+    discordactivitystatus = cycle(dscwatchingstatus)
 else:
     dscactivity = discord.ActivityType.playing
-    discordactivitystatus = random.choice(dscplayingstatuses)
+    discordactivitystatus = cycle(dscplayingstatuses)
 
 if dscstatus == "online":
     dcstatus = discord.Status.online
@@ -87,7 +99,11 @@ else:
 
 @client.event
 async def on_ready():
-    await client.change_presence(status=dscstatus, activity=discord.Activity(type=dscactivity, name=discordactivitystatus))
+    change_status.start()
+    daily_color.start()
+    quote_of_the_day.start()
+    meme_of_the_hour.start()
+    daily_weather.start()
     print(f"Logged in as {client.user.name}")
     print(f"Discord PY version: {discord.__version__}")
     print(f"Discord Slash version: {discord_slash.__version__}")
@@ -98,6 +114,10 @@ async def on_ready():
     print("-------------------")
     print("Bot is online.")
     print()
+
+@tasks.loop(seconds=60)
+async def change_status():
+    await client.change_presence(status=dscstatus, activity=discord.Activity(type=dscactivity, name=next(discordactivitystatus)))
 
 
 @client.command()
@@ -367,8 +387,6 @@ async def cat(ctx):
     catimageparse_json = catimagetext_json
     catimage = catimageparse_json['file']
     embed = discord.Embed(
-#           title=catimage,
-#           description=catimage,
             color=embedhexfix,
         )
     embed.set_image(url=catimage)
@@ -393,7 +411,6 @@ async def meme(ctx):
 
     
     embed = discord.Embed(
-#            title=catimage,
             description="Made by: " + str(memeauthor),
             color=embedhexfix,
         )
@@ -411,7 +428,7 @@ async def meme(ctx):
 #            description="https://www.youtube.com/channel/UCZ_lWTHNwPIAecB8nHLje9w",
 #            color=embedhexfix,
 #        )
-#    embed.set_image(url=memeimage)
+
 #    embed.add_field(name="Sumisu's Youtube:", value="https://www.youtube.com/embed/ur3-A7ovGUk", inline=True)
 #    embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
 #    embed.set_footer(text="Made by: Sumisu®")
@@ -431,7 +448,6 @@ async def hello(ctx):
             description=ctx.author.mention,
             color=embedhexfix,
         )
-#    embed.set_image(url=memeimage)
     embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
     embed.set_footer(text="Made by: Sumisu®")
     await ctx.send(embed=embed)
@@ -446,7 +462,6 @@ async def food(ctx):
     foodimageparse_json = foodimagetext_json
     foodimage = foodimageparse_json['image']
     embed = discord.Embed(
-#           title=catimage,
            description="Food Image: ",
             color=embedhexfix,
         )
@@ -493,8 +508,10 @@ async def anime(ctx, *, content:str):
 @client.command()
 async def age(ctx):
     accountage = ctx.author.created_at
+    date = accountage
+    utc_time = calendar.timegm(date.utctimetuple())
     embed = discord.Embed(
-           title="Account Age: ",
+           title="Account Age: <t:{}:R>".format(utc_time),
            description=ctx.author.mention + "\n\nYour account was created on: **" + accountage.strftime('%B %d %Y') + " at " + accountage.strftime('%I:%M:%S %p') + "**",
             color=embedhexfix,
         )
@@ -513,7 +530,7 @@ async def baka(ctx):
     bakaimage = bakaimageparse_json['url']
     bakaname = bakaimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=bakaname,
             color=embedhexfix,
         )
@@ -533,7 +550,7 @@ async def bite(ctx):
     biteimage = biteimageparse_json['url']
     bitename = biteimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=bitename,
             color=embedhexfix,
         )
@@ -553,7 +570,7 @@ async def blush(ctx):
     blushimage = blushimageparse_json['url']
     blushname = blushimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=blushname,
             color=embedhexfix,
         )
@@ -573,7 +590,7 @@ async def bored(ctx):
     boredimage = boredimageparse_json['url']
     boredname = boredimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=boredname,
             color=embedhexfix,
         )
@@ -593,7 +610,7 @@ async def cry(ctx):
     cryimage = cryimageparse_json['url']
     cryname = cryimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=cryname,
             color=embedhexfix,
         )
@@ -613,7 +630,7 @@ async def cuddle(ctx):
     cuddleimage = cuddleimageparse_json['url']
     cuddlename = cuddleimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=cuddlename,
             color=embedhexfix,
         )
@@ -633,7 +650,7 @@ async def dance(ctx):
     danceimage = danceimageparse_json['url']
     dancename = danceimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=dancename,
             color=embedhexfix,
         )
@@ -653,7 +670,7 @@ async def facepalm(ctx):
     facepalmimage = facepalmimageparse_json['url']
     facepalmname = facepalmimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=facepalmname,
             color=embedhexfix,
         )
@@ -673,7 +690,7 @@ async def feed(ctx):
     feedimage = feedimageparse_json['url']
     feedname = feedimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=feedname,
             color=embedhexfix,
         )
@@ -693,7 +710,7 @@ async def happy(ctx):
     happyimage = happyimageparse_json['url']
     happyname = happyimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=happyname,
             color=embedhexfix,
         )
@@ -713,7 +730,7 @@ async def highfive(ctx):
     highfiveimage = highfiveimageparse_json['url']
     highfivename = highfiveimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=highfivename,
             color=embedhexfix,
         )
@@ -733,7 +750,7 @@ async def hug(ctx):
     hugimage = hugimageparse_json['url']
     hugname = hugimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=hugname,
             color=embedhexfix,
         )
@@ -753,7 +770,7 @@ async def kiss(ctx):
     kissimage = kissimageparse_json['url']
     kissname = kissimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=kissname,
             color=embedhexfix,
         )
@@ -773,7 +790,7 @@ async def laugh(ctx):
     laughimage = laughimageparse_json['url']
     laughname = laughimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=laughname,
             color=embedhexfix,
         )
@@ -793,7 +810,7 @@ async def pat(ctx):
     patimage = patimageparse_json['url']
     patname = patimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=patname,
             color=embedhexfix,
         )
@@ -813,7 +830,7 @@ async def poke(ctx):
     pokeimage = pokeimageparse_json['url']
     pokename = pokeimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=pokename,
             color=embedhexfix,
         )
@@ -833,7 +850,7 @@ async def pout(ctx):
     poutimage = poutimageparse_json['url']
     poutname = poutimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=poutname,
             color=embedhexfix,
         )
@@ -853,7 +870,7 @@ async def shrug(ctx):
     shrugimage = shrugimageparse_json['url']
     shrugname = shrugimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=shrugname,
             color=embedhexfix,
         )
@@ -873,7 +890,7 @@ async def slap(ctx):
     slapimage = slapimageparse_json['url']
     slapname = slapimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=slapname,
             color=embedhexfix,
         )
@@ -893,7 +910,7 @@ async def sleep(ctx):
     sleepimage = sleepimageparse_json['url']
     sleepname = sleepimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=sleepname,
             color=embedhexfix,
         )
@@ -913,7 +930,7 @@ async def smile(ctx):
     smileimage = smileimageparse_json['url']
     smilename = smileimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=smilename,
             color=embedhexfix,
         )
@@ -933,7 +950,7 @@ async def smug(ctx):
     smugimage = smugimageparse_json['url']
     smugname = smugimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=smugname,
             color=embedhexfix,
         )
@@ -953,7 +970,7 @@ async def stare(ctx):
     stareimage = stareimageparse_json['url']
     starename = stareimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=starename,
             color=embedhexfix,
         )
@@ -973,7 +990,7 @@ async def think(ctx):
     thinkimage = thinkimageparse_json['url']
     thinkname = thinkimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=thinkname,
             color=embedhexfix,
         )
@@ -993,7 +1010,7 @@ async def thumbsup(ctx):
     thumbsupimage = thumbsupimageparse_json['url']
     thumbsupname = thumbsupimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=thumbsupname,
             color=embedhexfix,
         )
@@ -1013,7 +1030,7 @@ async def tickle(ctx):
     tickleimage = tickleimageparse_json['url']
     ticklename = tickleimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=ticklename,
             color=embedhexfix,
         )
@@ -1033,7 +1050,7 @@ async def wave(ctx):
     waveimage = waveimageparse_json['url']
     wavename = waveimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=wavename,
             color=embedhexfix,
         )
@@ -1053,7 +1070,7 @@ async def wink(ctx):
     winkimage = winkimageparse_json['url']
     winkname = winkimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=winkname,
             color=embedhexfix,
         )
@@ -1076,7 +1093,7 @@ async def nekos(ctx):
     embed = discord.Embed(
            title="Artist: " + nekosname,
             url=nekosurl,
-#            description=nekosname,
+
             color=embedhexfix,
         )
     embed.set_image(url=nekosimage)
@@ -1170,7 +1187,7 @@ async def yesorno(ctx):
     yesornoimage = yesornoparse_json['image']
     embed = discord.Embed(
            title=yesorno.title(),
-#           description='',
+
             color=embedhexfix,
         )
     embed.set_image(url=yesornoimage)
@@ -1190,10 +1207,10 @@ async def insult(ctx):
 
     embed = discord.Embed(
            title=insult,
-#           description=insult,
+
             color=embedhexfix,
         )
-#    embed.set_image(url=yesornoimage)
+
     embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
     embed.set_footer(text="Made by: Sumisu®")
     await ctx.send(embed=embed)
@@ -1220,10 +1237,10 @@ async def ipconfig(ctx, arg):
 
     embed = discord.Embed(
            title="Status: " + status.title(),
-#           description=insult,
+
             color=embedhexfix,
         )
-#    embed.set_image(url=yesornoimage)
+
     embed.add_field(name="Continent: ", value=continent, inline=False)
     embed.add_field(name="Country: ", value=country, inline=False)
     embed.add_field(name="Country Code: ", value=countryCode, inline=False)
@@ -1256,7 +1273,7 @@ async def randomcolor(ctx):
     embed = discord.Embed(
            title=randomcolor,
            url='https://www.color-hex.com/color/' + randomcolorfixed,
-#           description=randomcolorimage,
+
             color=randomcolorembed
         )
     embed.set_image(url="https://plchldr.co/i/250x215?&bg=" + randomcolorfixed + "&text=")
@@ -1278,11 +1295,11 @@ async def boredactivity(ctx):
     
     embed = discord.Embed(
            title='Bored Activity:',
-#           url='',
+
            description=boredactivity + ".",
             color=embedhexfix,
         )
-    #embed.set_image(url=shrugimage)
+
     embed.add_field(name="Type: ", value=boredactivitytype.title(), inline=True)
     embed.add_field(name="Participants: ", value=boredactivityparticipants, inline=True)
     embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
@@ -1302,11 +1319,11 @@ async def time(ctx):
     
     embed = discord.Embed(
            title='Time:',
-#           url='',
+
            description=time,
             color=embedhexfix,
         )
-    #embed.set_image(url=shrugimage)
+
     embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
     embed.set_footer(text="Made by: Sumisu®")
     await ctx.send(embed=embed)
@@ -1357,7 +1374,7 @@ async def lookup(ctx, arg):
 
     embed = discord.Embed(
            title="__Define: " + lookupword.capitalize() + "__",
-#           description=str(lookupdefinitionfixed),
+
             color=embedhexfix,
         )
     embed.add_field(name="Type: ", value=partofspeech.capitalize(), inline=False)
@@ -1371,7 +1388,7 @@ async def lookup(ctx, arg):
 
 @client.command(name="yomomma",
             description="Sends a Yo Momma joke!",
-#            aliases=['dm'],
+
             pass_context=True)
 async def yomomma(ctx):
     yomommar = requests.get('https://sumisuyomomma-api.herokuapp.com/jokes')
@@ -1382,12 +1399,12 @@ async def yomomma(ctx):
     yomommajoke = yomommaparse_json['joke']
     
     embed = discord.Embed(
-#           title='',
-#           url='',
+
+
            description=yomommajoke,
             color=embedhexfix,
         )
-    #embed.set_image(url=shrugimage)
+
     embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
     embed.set_footer(text="Made by: Sumisu®")
     await ctx.send(embed=embed)
@@ -1395,7 +1412,7 @@ async def yomomma(ctx):
 
 @client.command(name="uselessfact",
             description="Sends a useless fact!",
-#            aliases=['dm'],
+
             pass_context=True)
 async def uselessfact(ctx):
     uselessfactr = requests.get('https://uselessfacts.jsph.pl/random.json?language=en')
@@ -1406,12 +1423,12 @@ async def uselessfact(ctx):
     uselessfact = uselessfactparse_json['text']
     
     embed = discord.Embed(
-#           title='',
-#           url='',
+
+
            description=uselessfact,
             color=embedhexfix,
         )
-    #embed.set_image(url=shrugimage)
+
     embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
     embed.set_footer(text="Made by: Sumisu®")
     await ctx.send(embed=embed)
@@ -1426,8 +1443,8 @@ async def coffee(ctx):
     coffeeimageparse_json = coffeeimagetext_json
     coffeeimage = coffeeimageparse_json['file']
     embed = discord.Embed(
-#           title=catimage,
-#           description=catimage,
+
+
             color=embedhexfix,
         )
     embed.set_image(url=coffeeimage)
@@ -1453,7 +1470,7 @@ async def mcskin(ctx, arg):
 
     embed = discord.Embed(
            title=mcskinname,
-#           description=str(mcskinuuid),
+
             color=embedhexfix,
         )
     embed.set_image(url="https://crafatar.com/renders/body/" + mcskinuuid + "?overlay")
@@ -1479,7 +1496,7 @@ async def mcskindownload(ctx, arg):
     embed = discord.Embed(
            title="Download: " + mcskinname + "'s Skin!",
            url="https://crafatar.com/skins/" + mcskinuuid,
-#           description=str(mcskinuuid),
+
             color=embedhexfix,
         )
     embed.set_image(url="https://crafatar.com/skins/" + mcskinuuid)
@@ -1503,7 +1520,7 @@ async def drawcard(ctx):
     drawcardcode = str(drawcardvalue).capitalize() + " of " + str(drawcardsuit).capitalize()
     embed = discord.Embed(
            title=drawcardcode,
-#           description="",
+
             color=embedhexfix,
         )
     embed.set_image(url=drawcard)
@@ -1530,7 +1547,7 @@ async def randomd6(ctx):
 
     embed = discord.Embed(
            title=random6dimagevaluefixed,
-#           description=random6dimagevalue,
+
             color=embedhexfix,
         )
     embed.set_image(url="http://roll.diceapi.com/images/poorly-drawn/d6/" + str(random6dimagevalue) + ".png")
@@ -1557,7 +1574,7 @@ async def randomd20(ctx):
 
     embed = discord.Embed(
            title=randomd20imagevaluefixed,
-#           description=random6dimagevalue,
+
             color=embedhexfix,
         )
     embed.set_image(url="http://roll.diceapi.com/images/poorly-drawn/d20/" + str(randomd20imagevalue) + ".png")
@@ -1585,7 +1602,7 @@ async def covid(ctx):
 
     embed = discord.Embed(
            title="Covid Information:",
-#           description=random6dimagevalue,
+
             color=embedhexfix,
         )
     embed.add_field(name="Total Cases: ", value=covidtotalcases, inline=True)
@@ -1615,7 +1632,7 @@ async def hex(ctx, args):
     embed = discord.Embed(
            title=hexcolor,
            url='https://www.color-hex.com/color/' + args,
-#           description=randomcolorimage,
+
             color=hexcolorembed
         )
     embed.set_image(url="https://plchldr.co/i/250x215?&bg=" + hexcolorfixed + "&text=")
@@ -1860,7 +1877,446 @@ async def randomdrink(ctx):
     embed.set_footer(text="Made by: Sumisu®")
     await ctx.send(embed=embed)
     print("Random Drink Command Used By: {}".format(ctx.author) + " | Drink: {}".format(randommeal))
+
+@client.command(name="weather5",
+            description="Shows weather forcast information!",
+            aliases=['fivedayforcast', '5df', 'fdf'],
+            pass_context=True)
+async def weather5(ctx, *, content:str):
+    import requests
+    import time
+    searchlocation = "{}".format(content)
+    location = searchlocation.replace(",", "+")
+    zipurl = "https://nominatim.openstreetmap.org/?addressdetails=1&q=" + location +"&format=json&limit=1"
+    zipresponse = requests.get(zipurl).json()
+    longitude = zipresponse[0]["lon"]
+    latitude = zipresponse[0]["lat"]
+    zipclass = zipresponse[0]["class"]
+    try:
+        if zipclass == "natural":
+            city = zipresponse[0]["address"]["natural"]
+            county = zipresponse[0]["address"]["county"]
+            state = zipresponse[0]["address"]["state"]
+            country = zipresponse[0]["address"]["country"]
+        else:
+            city = zipresponse[0]["address"]["city"]
+            county = zipresponse[0]["address"]["county"]
+            state = zipresponse[0]["address"]["state"]
+            country = zipresponse[0]["address"]["country"]
+    except:
+        print("Weather Error!")
+
+
+    r = requests.get('https://api.weather.gov/points/' + latitude + ',' + longitude)
+    url = r.url
+    request = requests.get(url)
+    text_json = json.loads(request.text)
+    parse_json = text_json
+    forcasturl = parse_json['properties']['forecast']
+
+    forecastresponse = requests.get(forcasturl).json()
+    #################################################Forecast 1####################################################################
+    forecast1name = forecastresponse["properties"]["periods"][0]["name"]
+    forecast1temperatureunit = forecastresponse["properties"]["periods"][0]["temperatureUnit"]
+    forecast1temperature = forecastresponse["properties"]["periods"][0]["temperature"]
+    forecast1temperatureTrend = forecastresponse["properties"]["periods"][0]["temperatureTrend"]
+    forecast1windspeed = forecastresponse["properties"]["periods"][0]["windSpeed"]
+    forecast1winddirection = forecastresponse["properties"]["periods"][0]["windDirection"]
+    forecast1icon = forecastresponse["properties"]["periods"][0]["icon"]
+    forecast1shortforecast = forecastresponse["properties"]["periods"][0]["shortForecast"]
+    forecast1detailedforecast = forecastresponse["properties"]["periods"][0]["detailedForecast"]
+    embed1 = discord.Embed(
+           title='Forcast For: ' + city,
+           description=forecast1name + " it's " + forecast1shortforecast,
+           color=embedhexfix
+        )
+    embed1.add_field(name="Temperature: ", value=str(forecast1temperature) + " °" + forecast1temperatureunit, inline=True)
+    embed1.add_field(name="The tempature is: ", value=str(forecast1temperatureTrend).title().replace("None", "Stable"), inline=True)
+    embed1.add_field(name="Wind: ", value=str(forecast1windspeed) + " " + forecast1winddirection, inline=True)
+    embed1.add_field(name="Forecast: ", value=forecast1detailedforecast, inline=True)
+    embed1.set_image(url=forecast1icon)
+    embed1.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
+    embed1.set_footer(text="Made by: Sumisu®")
+
+
+
+    #################################################Forecast 2####################################################################
+    forecast2name = forecastresponse["properties"]["periods"][1]["name"]
+    forecast2temperatureunit = forecastresponse["properties"]["periods"][1]["temperatureUnit"]
+    forecast2temperature = forecastresponse["properties"]["periods"][1]["temperature"]
+    forecast2temperatureTrend = forecastresponse["properties"]["periods"][1]["temperatureTrend"]
+    forecast2windspeed = forecastresponse["properties"]["periods"][1]["windSpeed"]
+    forecast2winddirection = forecastresponse["properties"]["periods"][1]["windDirection"]
+    forecast2icon = forecastresponse["properties"]["periods"][1]["icon"]
+    forecast2shortforecast = forecastresponse["properties"]["periods"][1]["shortForecast"]
+    forecast2detailedforecast = forecastresponse["properties"]["periods"][1]["detailedForecast"]
+    embed2 = discord.Embed(
+           title='Forcast For: ' + city,
+           description=forecast2name + " it's " + forecast2shortforecast,
+           color=embedhexfix
+        )
+    embed2.add_field(name="Temperature: ", value=str(forecast2temperature) + " °" + forecast2temperatureunit, inline=True)
+    embed2.add_field(name="The tempature is: ", value=str(forecast2temperatureTrend).title().replace("None", "Stable"), inline=True)
+    embed2.add_field(name="Wind: ", value=str(forecast2windspeed) + " " + forecast2winddirection, inline=True)
+    embed2.add_field(name="Forecast: ", value=forecast2detailedforecast, inline=True)
+    embed2.set_image(url=forecast2icon)
+    embed2.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
+    embed2.set_footer(text="Made by: Sumisu®")
+
+    #################################################Forecast 3####################################################################
+    forecast3name = forecastresponse["properties"]["periods"][2]["name"]
+    forecast3temperatureunit = forecastresponse["properties"]["periods"][2]["temperatureUnit"]
+    forecast3temperature = forecastresponse["properties"]["periods"][2]["temperature"]
+    forecast3temperatureTrend = forecastresponse["properties"]["periods"][2]["temperatureTrend"]
+    forecast3windspeed = forecastresponse["properties"]["periods"][2]["windSpeed"]
+    forecast3winddirection = forecastresponse["properties"]["periods"][2]["windDirection"]
+    forecast3icon = forecastresponse["properties"]["periods"][2]["icon"]
+    forecast3shortforecast = forecastresponse["properties"]["periods"][2]["shortForecast"]
+    forecast3detailedforecast = forecastresponse["properties"]["periods"][2]["detailedForecast"]
+    embed3 = discord.Embed(
+           title='Forcast For: ' + city,
+           description=forecast3name + " it's " + forecast3shortforecast,
+           color=embedhexfix
+        )
+    embed3.add_field(name="Temperature: ", value=str(forecast3temperature) + " °" + forecast3temperatureunit, inline=True)
+    embed3.add_field(name="The tempature is: ", value=str(forecast3temperatureTrend).title().replace("None", "Stable"), inline=True)
+    embed3.add_field(name="Wind: ", value=str(forecast3windspeed) + " " + forecast3winddirection, inline=True)
+    embed3.add_field(name="Forecast: ", value=forecast3detailedforecast, inline=True)
+    embed3.set_image(url=forecast3icon)
+    embed3.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
+    embed3.set_footer(text="Made by: Sumisu®")
+
+    #################################################Forecast 4####################################################################
+    forecast4name = forecastresponse["properties"]["periods"][3]["name"]
+    forecast4temperatureunit = forecastresponse["properties"]["periods"][3]["temperatureUnit"]
+    forecast4temperature = forecastresponse["properties"]["periods"][3]["temperature"]
+    forecast4temperatureTrend = forecastresponse["properties"]["periods"][3]["temperatureTrend"]
+    forecast4windspeed = forecastresponse["properties"]["periods"][3]["windSpeed"]
+    forecast4winddirection = forecastresponse["properties"]["periods"][3]["windDirection"]
+    forecast4icon = forecastresponse["properties"]["periods"][3]["icon"]
+    forecast4shortforecast = forecastresponse["properties"]["periods"][3]["shortForecast"]
+    forecast4detailedforecast = forecastresponse["properties"]["periods"][3]["detailedForecast"]
+    embed4 = discord.Embed(
+           title='Forcast For: ' + city,
+           description=forecast4name + " it's " + forecast4shortforecast,
+           color=embedhexfix
+        )
+    embed4.add_field(name="Temperature: ", value=str(forecast4temperature) + " °" + forecast4temperatureunit, inline=True)
+    embed4.add_field(name="The tempature is: ", value=str(forecast4temperatureTrend).title().replace("None", "Stable"), inline=True)
+    embed4.add_field(name="Wind: ", value=str(forecast4windspeed) + " " + forecast4winddirection, inline=True)
+    embed4.add_field(name="Forecast: ", value=forecast4detailedforecast, inline=True)
+    embed4.set_image(url=forecast4icon)
+    embed4.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
+    embed4.set_footer(text="Made by: Sumisu®")
+
+    #################################################Forecast 5####################################################################
+    forecast5name = forecastresponse["properties"]["periods"][4]["name"]
+    forecast5temperatureunit = forecastresponse["properties"]["periods"][4]["temperatureUnit"]
+    forecast5temperature = forecastresponse["properties"]["periods"][4]["temperature"]
+    forecast5temperatureTrend = forecastresponse["properties"]["periods"][4]["temperatureTrend"]
+    forecast5windspeed = forecastresponse["properties"]["periods"][4]["windSpeed"]
+    forecast5winddirection = forecastresponse["properties"]["periods"][4]["windDirection"]
+    forecast5icon = forecastresponse["properties"]["periods"][4]["icon"]
+    forecast5shortforecast = forecastresponse["properties"]["periods"][4]["shortForecast"]
+    forecast5detailedforecast = forecastresponse["properties"]["periods"][4]["detailedForecast"]
+    embed5 = discord.Embed(
+           title='Forcast For: ' + city,
+           description=forecast5name + " it's " + forecast5shortforecast,
+           color=embedhexfix
+        )
+    embed5.add_field(name="Temperature: ", value=str(forecast5temperature) + " °" + forecast5temperatureunit, inline=True)
+    embed5.add_field(name="The tempature is: ", value=str(forecast5temperatureTrend).title().replace("None", "Stable"), inline=True)
+    embed5.add_field(name="Wind: ", value=str(forecast5windspeed) + " " + forecast5winddirection, inline=True)
+    embed5.add_field(name="Forecast: ", value=forecast5detailedforecast, inline=True)
+    embed5.set_image(url=forecast5icon)
+    embed5.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
+    embed5.set_footer(text="Made by: Sumisu®")
+
+    await ctx.send(embed=embed1)
+    time.sleep(5)
+    await ctx.send(embed=embed2)
+    time.sleep(5)
+    await ctx.send(embed=embed3)
+    time.sleep(5)
+    await ctx.send(embed=embed4)
+    time.sleep(5)
+    await ctx.send(embed=embed5)
+    print("Five Day Forecast Command Used By: {}".format(ctx.author) + " | Location: {}".format(content))
+
+@client.command(name="dailyweather",
+            description="Shows weather forcast information!",
+            aliases=['dailyforecast', 'df', 'dw', 'weather'],
+            pass_context=True)
+async def dailyweather(ctx, *, content:str):
+    import requests
+    import time
+    searchlocation = "{}".format(content)
+    location = searchlocation.replace(",", "+")
+    zipurl = "https://nominatim.openstreetmap.org/?addressdetails=1&q=" + location +"&format=json&limit=1"
+    zipresponse = requests.get(zipurl).json()
+    longitude = zipresponse[0]["lon"]
+    latitude = zipresponse[0]["lat"]
+    zipclass = zipresponse[0]["class"]
+    try:
+        if zipclass == "natural":
+            city = zipresponse[0]["address"]["natural"]
+            county = zipresponse[0]["address"]["county"]
+            state = zipresponse[0]["address"]["state"]
+            country = zipresponse[0]["address"]["country"]
+        else:
+            city = zipresponse[0]["address"]["city"]
+            county = zipresponse[0]["address"]["county"]
+            state = zipresponse[0]["address"]["state"]
+            country = zipresponse[0]["address"]["country"]
+    except:
+        print("Daily Forecast Error!")
+
+
+    r = requests.get('https://api.weather.gov/points/' + latitude + ',' + longitude)
+    url = r.url
+    request = requests.get(url)
+    text_json = json.loads(request.text)
+    parse_json = text_json
+    forcasturl = parse_json['properties']['forecast']
+
+    forecastresponse = requests.get(forcasturl).json()
+
+    #################################################Forecast 1####################################################################
+    forecast1name = forecastresponse["properties"]["periods"][0]["name"]
+    forecast1temperatureunit = forecastresponse["properties"]["periods"][0]["temperatureUnit"]
+    forecast1temperature = forecastresponse["properties"]["periods"][0]["temperature"]
+    forecast1temperatureTrend = forecastresponse["properties"]["periods"][0]["temperatureTrend"]
+    forecast1windspeed = forecastresponse["properties"]["periods"][0]["windSpeed"]
+    forecast1winddirection = forecastresponse["properties"]["periods"][0]["windDirection"]
+    forecast1icon = forecastresponse["properties"]["periods"][0]["icon"]
+    forecast1shortforecast = forecastresponse["properties"]["periods"][0]["shortForecast"]
+    forecast1detailedforecast = forecastresponse["properties"]["periods"][0]["detailedForecast"]
+    embed = discord.Embed(
+           title='Forcast For: ' + city,
+           description=forecast1name + " it's " + forecast1shortforecast,
+           color=embedhexfix
+        )
+    embed.add_field(name="Temperature: ", value=str(forecast1temperature) + " °" + forecast1temperatureunit, inline=True)
+    embed.add_field(name="The tempature is: ", value=str(forecast1temperatureTrend).title().replace("None", "Stable"), inline=True)
+    embed.add_field(name="Wind: ", value=str(forecast1windspeed) + " " + forecast1winddirection, inline=True)
+    embed.add_field(name="Forecast: ", value=forecast1detailedforecast, inline=True)
+    embed.set_image(url=forecast1icon)
+    embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
+    embed.set_footer(text="Made by: Sumisu®")
+
+    await ctx.send(embed=embed)
+    print("Daily Forecast Command Used By: {}".format(ctx.author) + " | Location: {}".format(content))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ##################################################################################################################
+#####################LOOPS##################LOOPS####################LOOPS########################################
+##################################################################################################################
+
+@tasks.loop(hours=24)
+async def daily_color():
+    target_channel_id = dailycolorchannel
+    randomcolorr = requests.get('https://x-colors.herokuapp.com/api/random')
+    randomcolorurl = randomcolorr.url
+    randomcolorrequest = requests.get(randomcolorurl)
+    randomcolortext_json = json.loads(randomcolorrequest.text)
+    randomcolorparse_json = randomcolortext_json
+    randomcolor = randomcolorparse_json['hex']
+    randomcolorfixed = randomcolor.replace("#","")
+    randomcolorembed = int(randomcolorfixed, 16)
+    embed = discord.Embed(
+        title="Color of the day: " + randomcolor,
+        url='https://www.color-hex.com/color/' + randomcolorfixed,
+
+        color=randomcolorembed
+    )
+    embed.set_image(url="https://plchldr.co/i/250x215?&bg=" + randomcolorfixed + "&text=")
+    embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
+    embed.set_footer(text="Made by: Sumisu®")
+    message_channel = client.get_channel(target_channel_id)
+    await message_channel.send(embed=embed)
+
+@tasks.loop(hours=1)
+async def meme_of_the_hour():
+    target_channel_id = memeofthehourchannel
+    memeimager = requests.get('https://meme-api.herokuapp.com/gimme')
+    memeimageurl = memeimager.url
+    memeimagerequest = requests.get(memeimageurl)
+    memeimagetext_json = json.loads(memeimagerequest.text)
+    memeimageparse_json = memeimagetext_json
+    memeimage = memeimageparse_json['url']
+    memeauthorurl = memeimager.url
+    memeauthorrequest = requests.get(memeauthorurl)
+    memeauthortext_json = json.loads(memeauthorrequest.text)
+    memeauthorparse_json = memeauthortext_json
+    memeauthor = memeauthorparse_json['author']
+    embed = discord.Embed(
+        title="Meme of the hour:",
+        url="https://www.reddit.com/user/{}".format(memeauthor),
+        description="Made by: " + str(memeauthor),
+        color=embedhexfix,
+    )
+    embed.set_image(url=memeimage)
+    embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
+    embed.set_footer(text="Made by: Sumisu®")
+    message_channel = client.get_channel(target_channel_id)
+    await message_channel.send(embed=embed)
+
+@tasks.loop(hours=24)
+async def quote_of_the_day():
+    target_channel_id = quoteofthedaychannel
+    randomquoter = requests.get('https://zenquotes.io/api/random')
+    randomquoteurl = randomquoter.url
+    randomquoterequest = requests.get(randomquoteurl)
+    randomquotetext_json = json.loads(randomquoterequest.text)
+    randomquoteparse_json = randomquotetext_json
+    randomquote = randomquoteparse_json[0]['q']
+    randomquoteauthor = randomquoteparse_json[0]['a']
+    embed = discord.Embed(
+        title="Random Quote:",
+        description=randomquote,
+        color=embedhexfix
+    )
+    embed.add_field(name="Author: ", value=randomquoteauthor, inline=False)
+    embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
+    embed.set_footer(text="Made by: Sumisu®")
+    message_channel = client.get_channel(target_channel_id)
+    await message_channel.send(embed=embed)
+
+#################################################Daily Forecast#######################################################
+
+@tasks.loop(hours=24)
+async def daily_weather():
+    target_channel_id = dailyweatherchannel
+    import requests
+    searchlocation = dailyweatherlocation
+    location = searchlocation.replace(",", "+")
+    zipurl = "https://nominatim.openstreetmap.org/?addressdetails=1&q=" + location +"&format=json&limit=1"
+    zipresponse = requests.get(zipurl).json()
+    longitude = zipresponse[0]["lon"]
+    latitude = zipresponse[0]["lat"]
+    zipclass = zipresponse[0]["class"]
+    try:
+        if zipclass == "natural":
+            city = zipresponse[0]["address"]["natural"]
+            county = zipresponse[0]["address"]["county"]
+            state = zipresponse[0]["address"]["state"]
+            country = zipresponse[0]["address"]["country"]
+        else:
+            city = zipresponse[0]["address"]["city"]
+            county = zipresponse[0]["address"]["county"]
+            state = zipresponse[0]["address"]["state"]
+            country = zipresponse[0]["address"]["country"]
+    except:
+        print("Daily Forecast Error!")
+
+
+    r = requests.get('https://api.weather.gov/points/' + latitude + ',' + longitude)
+    url = r.url
+    request = requests.get(url)
+    text_json = json.loads(request.text)
+    parse_json = text_json
+    forcasturl = parse_json['properties']['forecast']
+
+    forecastresponse = requests.get(forcasturl).json()
+
+    forecast1name = forecastresponse["properties"]["periods"][0]["name"]
+    forecast1temperatureunit = forecastresponse["properties"]["periods"][0]["temperatureUnit"]
+    forecast1temperature = forecastresponse["properties"]["periods"][0]["temperature"]
+    forecast1temperatureTrend = forecastresponse["properties"]["periods"][0]["temperatureTrend"]
+    forecast1windspeed = forecastresponse["properties"]["periods"][0]["windSpeed"]
+    forecast1winddirection = forecastresponse["properties"]["periods"][0]["windDirection"]
+    forecast1icon = forecastresponse["properties"]["periods"][0]["icon"]
+    forecast1shortforecast = forecastresponse["properties"]["periods"][0]["shortForecast"]
+    forecast1detailedforecast = forecastresponse["properties"]["periods"][0]["detailedForecast"]
+    embed = discord.Embed(
+           title='Forcast For: ' + city,
+           description=forecast1name + " it's " + forecast1shortforecast,
+           color=embedhexfix
+        )
+    embed.add_field(name="Temperature: ", value=str(forecast1temperature) + " °" + forecast1temperatureunit, inline=True)
+    embed.add_field(name="The tempature is: ", value=str(forecast1temperatureTrend).title().replace("None", "Stable"), inline=True)
+    embed.add_field(name="Wind: ", value=str(forecast1windspeed) + " " + forecast1winddirection, inline=True)
+    embed.add_field(name="Forecast: ", value=forecast1detailedforecast, inline=True)
+    embed.set_image(url=forecast1icon)
+    embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
+    embed.set_footer(text="Made by: Sumisu®")
+
+    message_channel = client.get_channel(target_channel_id)
+    await message_channel.send(embed=embed)
+##################################################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2211,8 +2667,8 @@ async def _cat(ctx):
     catimageparse_json = catimagetext_json
     catimage = catimageparse_json['file']
     embed = discord.Embed(
-#           title=catimage,
-#           description=catimage,
+
+
             color=embedhexfix,
         )
     embed.set_image(url=catimage)
@@ -2240,7 +2696,7 @@ async def _meme(ctx):
 
     
     embed = discord.Embed(
-#            title=catimage,
+
             description="Made by: " + str(memeauthor),
             color=embedhexfix,
         )
@@ -2261,7 +2717,7 @@ async def _hello(ctx):
             description=ctx.author.mention,
             color=embedhexfix,
         )
-#    embed.set_image(url=memeimage)
+
     embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
     embed.set_footer(text="Made by: Sumisu®")
     await ctx.send(embed=embed)
@@ -2278,7 +2734,7 @@ async def _hi(ctx):
             description=ctx.author.mention,
             color=embedhexfix,
         )
-#    embed.set_image(url=memeimage)
+
     embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
     embed.set_footer(text="Made by: Sumisu®")
     await ctx.send(embed=embed)
@@ -2295,7 +2751,7 @@ async def _hey(ctx):
             description=ctx.author.mention,
             color=embedhexfix,
         )
-#    embed.set_image(url=memeimage)
+
     embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
     embed.set_footer(text="Made by: Sumisu®")
     await ctx.send(embed=embed)
@@ -2313,7 +2769,7 @@ async def _food(ctx):
     foodimageparse_json = foodimagetext_json
     foodimage = foodimageparse_json['image']
     embed = discord.Embed(
-#           title=catimage,
+
            description="Food Image: ",
             color=embedhexfix,
         )
@@ -2329,8 +2785,10 @@ async def _food(ctx):
 )
 async def _age(ctx):
     accountage = ctx.author.created_at
+    date = accountage
+    utc_time = calendar.timegm(date.utctimetuple())
     embed = discord.Embed(
-           title="Account Age: ",
+           title="Account Age: <t:{}:R>".format(utc_time),
            description=ctx.author.mention + "\n\nYour account was created on: **" + accountage.strftime('%B %d %Y') + " at " + accountage.strftime('%I:%M:%S %p') + "**",
             color=embedhexfix,
         )
@@ -2353,7 +2811,7 @@ async def _baka(ctx):
     bakaimage = bakaimageparse_json['url']
     bakaname = bakaimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=bakaname,
             color=embedhexfix,
         )
@@ -2376,7 +2834,7 @@ async def _bite(ctx):
     biteimage = biteimageparse_json['url']
     bitename = biteimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=bitename,
             color=embedhexfix,
         )
@@ -2399,7 +2857,7 @@ async def _blush(ctx):
     blushimage = blushimageparse_json['url']
     blushname = blushimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=blushname,
             color=embedhexfix,
         )
@@ -2422,7 +2880,7 @@ async def _bored(ctx):
     boredimage = boredimageparse_json['url']
     boredname = boredimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=boredname,
             color=embedhexfix,
         )
@@ -2445,7 +2903,7 @@ async def _cry(ctx):
     cryimage = cryimageparse_json['url']
     cryname = cryimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=cryname,
             color=embedhexfix,
         )
@@ -2468,7 +2926,7 @@ async def _cuddle(ctx):
     cuddleimage = cuddleimageparse_json['url']
     cuddlename = cuddleimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=cuddlename,
             color=embedhexfix,
         )
@@ -2491,7 +2949,7 @@ async def _dance(ctx):
     danceimage = danceimageparse_json['url']
     dancename = danceimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=dancename,
             color=embedhexfix,
         )
@@ -2514,7 +2972,7 @@ async def _facepalm(ctx):
     facepalmimage = facepalmimageparse_json['url']
     facepalmname = facepalmimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=facepalmname,
             color=embedhexfix,
         )
@@ -2537,7 +2995,7 @@ async def _feed(ctx):
     feedimage = feedimageparse_json['url']
     feedname = feedimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=feedname,
             color=embedhexfix,
         )
@@ -2560,7 +3018,7 @@ async def _happy(ctx):
     happyimage = happyimageparse_json['url']
     happyname = happyimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=happyname,
             color=embedhexfix,
         )
@@ -2583,7 +3041,7 @@ async def _highfive(ctx):
     highfiveimage = highfiveimageparse_json['url']
     highfivename = highfiveimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=highfivename,
             color=embedhexfix,
         )
@@ -2606,7 +3064,7 @@ async def _hug(ctx):
     hugimage = hugimageparse_json['url']
     hugname = hugimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=hugname,
             color=embedhexfix,
         )
@@ -2629,7 +3087,7 @@ async def _kiss(ctx):
     kissimage = kissimageparse_json['url']
     kissname = kissimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=kissname,
             color=embedhexfix,
         )
@@ -2652,7 +3110,7 @@ async def _laugh(ctx):
     laughimage = laughimageparse_json['url']
     laughname = laughimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=laughname,
             color=embedhexfix,
         )
@@ -2675,7 +3133,7 @@ async def _pat(ctx):
     patimage = patimageparse_json['url']
     patname = patimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=patname,
             color=embedhexfix,
         )
@@ -2698,7 +3156,7 @@ async def _poke(ctx):
     pokeimage = pokeimageparse_json['url']
     pokename = pokeimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=pokename,
             color=embedhexfix,
         )
@@ -2721,7 +3179,7 @@ async def _pout(ctx):
     poutimage = poutimageparse_json['url']
     poutname = poutimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=poutname,
             color=embedhexfix,
         )
@@ -2744,7 +3202,7 @@ async def _shrug(ctx):
     shrugimage = shrugimageparse_json['url']
     shrugname = shrugimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=shrugname,
             color=embedhexfix,
         )
@@ -2767,7 +3225,7 @@ async def _slap(ctx):
     slapimage = slapimageparse_json['url']
     slapname = slapimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=slapname,
             color=embedhexfix,
         )
@@ -2790,7 +3248,7 @@ async def _sleep(ctx):
     sleepimage = sleepimageparse_json['url']
     sleepname = sleepimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=sleepname,
             color=embedhexfix,
         )
@@ -2813,7 +3271,7 @@ async def _smile(ctx):
     smileimage = smileimageparse_json['url']
     smilename = smileimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=smilename,
             color=embedhexfix,
         )
@@ -2836,7 +3294,7 @@ async def _smug(ctx):
     smugimage = smugimageparse_json['url']
     smugname = smugimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=smugname,
             color=embedhexfix,
         )
@@ -2859,7 +3317,7 @@ async def _stare(ctx):
     stareimage = stareimageparse_json['url']
     starename = stareimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=starename,
             color=embedhexfix,
         )
@@ -2882,7 +3340,7 @@ async def _think(ctx):
     thinkimage = thinkimageparse_json['url']
     thinkname = thinkimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=thinkname,
             color=embedhexfix,
         )
@@ -2905,7 +3363,7 @@ async def _thumbsup(ctx):
     thumbsupimage = thumbsupimageparse_json['url']
     thumbsupname = thumbsupimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=thumbsupname,
             color=embedhexfix,
         )
@@ -2928,7 +3386,7 @@ async def _tickle(ctx):
     tickleimage = tickleimageparse_json['url']
     ticklename = tickleimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=ticklename,
             color=embedhexfix,
         )
@@ -2951,7 +3409,7 @@ async def _wave(ctx):
     waveimage = waveimageparse_json['url']
     wavename = waveimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=wavename,
             color=embedhexfix,
         )
@@ -2974,7 +3432,7 @@ async def _wink(ctx):
     winkimage = winkimageparse_json['url']
     winkname = winkimageparse_json['anime_name']
     embed = discord.Embed(
-#           title=catimage,
+
            description=winkname,
             color=embedhexfix,
         )
@@ -3000,7 +3458,7 @@ async def _nekos(ctx):
     embed = discord.Embed(
            title="Artist: " + nekosname,
             url=nekosurl,
-#            description=nekosname,
+
             color=embedhexfix,
         )
     embed.set_image(url=nekosimage)
@@ -3100,7 +3558,7 @@ async def _yesorno(ctx):
     yesornoimage = yesornoparse_json['image']
     embed = discord.Embed(
            title=yesorno.title(),
-#           description='',
+
             color=embedhexfix,
         )
     embed.set_image(url=yesornoimage)
@@ -3123,10 +3581,10 @@ async def _insult(ctx):
 
     embed = discord.Embed(
            title=insult,
-#           description=insult,
+
             color=embedhexfix,
         )
-#    embed.set_image(url=yesornoimage)
+
     embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
     embed.set_footer(text="Made by: Sumisu®")
     await ctx.send(embed=embed)
@@ -3149,7 +3607,7 @@ async def _randomcolor(ctx):
     embed = discord.Embed(
            title=randomcolor,
            url='https://www.color-hex.com/color/' + randomcolorfixed,
-#           description=randomcolorimage,
+
             color=randomcolorembed
         )
     embed.set_image(url="https://plchldr.co/i/250x215?&bg=" + randomcolorfixed + "&text=")
@@ -3173,15 +3631,15 @@ async def _time(ctx):
     
     embed = discord.Embed(
            title='Time:',
-#           url='',
+
            description=time,
             color=embedhexfix,
         )
-    #embed.set_image(url=shrugimage)
+
     embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
     embed.set_footer(text="Made by: Sumisu®")
     await ctx.send(embed=embed)
-    print("/Time Command Used By: {}".format(ctx.author) + " | Time: " + time)
+    print("Time Command Used By: {}".format(ctx.author) + " | Time: " + time)
 
 @slash.slash(
     name="yomomma",
@@ -3196,16 +3654,16 @@ async def _yomomma(ctx):
     yomommajoke = yomommaparse_json['joke']
     
     embed = discord.Embed(
-#           title='',
-#           url='',
+
+
            description=yomommajoke,
             color=embedhexfix,
         )
-    #embed.set_image(url=shrugimage)
+
     embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
     embed.set_footer(text="Made by: Sumisu®")
     await ctx.send(embed=embed)
-    print("/Yo Momma Command Used By: {}".format(ctx.author) + " | Joke: " + yomommajoke)
+    print("Yo Momma Command Used By: {}".format(ctx.author) + " | Joke: " + yomommajoke)
 
 @slash.slash(
     name="uselessfact",
@@ -3220,12 +3678,12 @@ async def _uselessfact(ctx):
     uselessfact = uselessfactparse_json['text']
     
     embed = discord.Embed(
-#           title='',
-#           url='',
+
+
            description=uselessfact,
             color=embedhexfix,
         )
-    #embed.set_image(url=shrugimage)
+
     embed.set_author(name=discordusername, url=discordusernameurl, icon_url=boticon)
     embed.set_footer(text="Made by: Sumisu®")
     await ctx.send(embed=embed)
@@ -3243,8 +3701,8 @@ async def _coffee(ctx):
     coffeeimageparse_json = coffeeimagetext_json
     coffeeimage = coffeeimageparse_json['file']
     embed = discord.Embed(
-#           title=catimage,
-#           description=catimage,
+
+
             color=embedhexfix,
         )
     embed.set_image(url=coffeeimage)
@@ -3271,7 +3729,7 @@ async def _drawcard(ctx):
     drawcardcode = str(drawcardvalue).capitalize() + " of " + str(drawcardsuit).capitalize()
     embed = discord.Embed(
            title=drawcardcode,
-#           description="",
+
             color=embedhexfix,
         )
     embed.set_image(url=drawcard)
@@ -3298,7 +3756,7 @@ async def _d6(ctx):
 
     embed = discord.Embed(
            title=random6dimagevaluefixed,
-#           description=random6dimagevalue,
+
             color=embedhexfix,
         )
     embed.set_image(url="http://roll.diceapi.com/images/poorly-drawn/d6/" + str(random6dimagevalue) + ".png")
@@ -3325,7 +3783,7 @@ async def _d20(ctx):
 
     embed = discord.Embed(
            title=randomd20imagevaluefixed,
-#           description=random6dimagevalue,
+
             color=embedhexfix,
         )
     embed.set_image(url="http://roll.diceapi.com/images/poorly-drawn/d20/" + str(randomd20imagevalue) + ".png")
@@ -3353,7 +3811,7 @@ async def _covid(ctx):
 
     embed = discord.Embed(
            title="Covid Information:",
-#           description=random6dimagevalue,
+
             color=embedhexfix,
         )
     embed.add_field(name="Total Cases: ", value=covidtotalcases, inline=True)
@@ -3365,6 +3823,13 @@ async def _covid(ctx):
     embed.set_footer(text="Made by: Sumisu®")
     await ctx.send(embed=embed)
     print("COVID Information Command Used By: {}".format(ctx.author))
-##########################################################################################
+##################################################################################################################
 
 client.run(config["token"])
+
+# If you wish to securely hide your token, you can do so in a .env file.
+# 1. Create a .env in the same directory as your Python scripts
+# 2. In the .env file format your variables like this: VARIABLE_NAME=your_token_here
+# 3. At the top of the Python script, import os
+# 4. In Python, you can read a .env file using this syntax:
+# token = os.getenv(VARIABLE_NAME)
