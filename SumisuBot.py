@@ -21,8 +21,6 @@ import sys
 from datetime import datetime
 from itertools import cycle
 import calendar
-import pgeocode
-
 
 __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
