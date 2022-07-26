@@ -1,4 +1,7 @@
-# SumisuBot
+<h1 align="center">
+SumisuBot
+</h1>
+
 <p align="center">
   <a href="https://mhm.wtf/SumisuBot">
     <img src="https://healthchecks.io/badge/e4429cbd-b1f2-4564-b38c-ec211a/r6Yn3MA5.svg">
@@ -7,14 +10,15 @@
     <img src="https://img.shields.io/discord/850565832182464532?label=Discord&logo=Discord&logoColor=brightgreen">
   </a>
 </p>
-<p align="center">
 
-An open source continuation of Minecraft Note Block Studio with exciting new features!
+<p2 align="center">
 
-</p>
+A Discord Bot made by [SumisuMC](https://mhm.wtf/SumisuDC)
+
+</p2>
 
 
-**A Discord Bot made by SumisuMC**
+
 <br />
 
 
