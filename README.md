@@ -1,6 +1,18 @@
 # SumisuBot
+<p align="center">
+  <a href="https://mhm.wtf/SumisuBot">
+    <img src="https://healthchecks.io/badge/e4429cbd-b1f2-4564-b38c-ec211a/r6Yn3MA5.svg">
+  </a>
+  <a href="https://mhm.wtf/SumisuDC">
+    <img src="https://img.shields.io/discord/850565832182464532?label=Discord&logo=Discord&logoColor=brightgreen">
+  </a>
+</p>
+<p align="center">
 
-[![HealthChecks](https://healthchecks.io/badge/e4429cbd-b1f2-4564-b38c-ec211a/r6Yn3MA5.svg)](https://mhm.wtf/SumisuDC)
+An open source continuation of Minecraft Note Block Studio with exciting new features!
+
+</p>
+
 
 **A Discord Bot made by SumisuMC**
 <br />
@@ -8,7 +20,8 @@
 
 ### Invite the bot:
 To invite the bot click the link below:
-[Sumisu Bot](https://mhm.wtf/SumisuBot)
+
+[![Sumisu Bot](https://img.shields.io/badge/Sumisu%20Bot-Invite-brightgreen)](https://mhm.wtf/SumisuBot)
 <br />
 
 # Command list
@@ -25,7 +38,7 @@ prefix = |
 | age	|	Tells you when your account was created!	|	`age`	|
 | baka	|	Sends a baka anime gif in chat!	|	`baka`	|
 | bite	|	Sends a biting anime gif in chat!	|	`bite`	|
-| blush	|	Sends a blushing anime gif in chat!	|	`blush`	|
+| blush	|	Sends a blushing anime gif in chat!	|   `blush`	|
 
 ## Page 2
 |	Command	| description	| Usage
