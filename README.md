@@ -1,6 +1,6 @@
 # SumisuBot
 
-[![Heroku](https://byob.yarr.is/beanboi7/yomomma-apiv2/heroku/)](https://sumisuapi.herokuapp.com/sumisu/)
+[![HealthChecks](https://healthchecks.io/badge/e4429cbd-b1f2-4564-b38c-ec211a/r6Yn3MA5.svg)](https://mhm.wtf/SumisuDC)
 
 **A Discord Bot made by SumisuMC**
 <br />
@@ -8,7 +8,8 @@
 
 ### Invite the bot:
 To invite the bot click the link below:
-[SumisuBot](https://sumisuapi.herokuapp.com/jokes) <br>
+[Sumisu Bot](https://mhm.wtf/SumisuBot)
+<br />
 
 # Command list
 prefix = |
