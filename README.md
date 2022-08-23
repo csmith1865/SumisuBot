@@ -4,7 +4,7 @@ SumisuBot
 
 <p align="center">
   <a href="https://mhm.wtf/SumisuBot">
-    <img src="https://healthchecks.io/badge/e4429cbd-b1f2-4564-b38c-ec211a/r6Yn3MA5.svg">
+    <img src="https://uptime.sumisu.xyz/api/badge/1/status?upLabel=Bot%20Online&downLabel=Bot%20Offline">
   </a>
   <a href="https://mhm.wtf/SumisuDC">
     <img src="https://img.shields.io/discord/850565832182464532?label=Discord&logo=Discord&logoColor=brightgreen">
